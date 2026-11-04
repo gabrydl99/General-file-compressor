@@ -1,0 +1,4 @@
+# PyMuPDF is installed separately with --no-deps (see build_windows.bat)
+PySide6-Essentials==6.9.3
+Pillow>=11.0
+pillow-heif>=0.18
