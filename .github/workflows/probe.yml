@@ -1,0 +1,20 @@
+name: probe
+on:
+  push:
+    branches: [ci-probe]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"; ls $ANDROID_HOME; ls $ANDROID_HOME/build-tools $ANDROID_HOME/platforms $ANDROID_HOME/ndk 2>/dev/null | head -30
+          java -version 2>&1 | head -2; ls /dev/kvm && echo KVM-OK
+          nproc; free -g | head -2; df -h / | tail -1
+      - name: Push result to output branch
+        run: |
+          mkdir out && cd out && git init -q -b ci-out
+          { echo "ANDROID_HOME=$ANDROID_HOME"; ls $ANDROID_HOME/build-tools $ANDROID_HOME/platforms $ANDROID_HOME/ndk 2>&1; ls -l /dev/kvm 2>&1; nproc; } > probe.txt
+          git add -A && git -c user.name=ci -c user.email=ci@local commit -qm probe
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" ci-out
