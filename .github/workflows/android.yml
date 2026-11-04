@@ -1,0 +1,174 @@
+name: Android app
+
+on:
+  push:
+    branches: [main, 'android**']
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Quick compile check that doesn't wait for FFmpeg.
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.11.1' }
+      - name: Compile
+        run: |
+          mkdir -p logs
+          gradle -p android --no-daemon --console=plain compileDebugKotlin 2>&1 | tee logs/compile.log
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: log-compile, path: logs, if-no-files-found: ignore }
+
+  ffmpeg:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [arm64-v8a, armeabi-v7a, x86_64]
+    steps:
+      - uses: actions/checkout@v4
+      - id: cache
+        uses: actions/cache@v4
+        with:
+          path: android/ffmpeg/out/${{ matrix.abi }}
+          key: ffmpeg-v1-${{ matrix.abi }}-${{ hashFiles('android/ffmpeg/build_ffmpeg.sh') }}
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq nasm autoconf automake libtool pkg-config
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Build FFmpeg
+        run: |
+          mkdir -p logs
+          WORK_DIR=$RUNNER_TEMP/ffbuild bash android/ffmpeg/build_ffmpeg.sh ${{ matrix.abi }} android/ffmpeg/out/${{ matrix.abi }} 2>&1 | tee logs/ffmpeg-${{ matrix.abi }}.log
+      - uses: actions/upload-artifact@v4
+        with: { name: ffmpeg-${{ matrix.abi }}, path: android/ffmpeg/out/${{ matrix.abi }} }
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: log-ffmpeg-${{ matrix.abi }}, path: logs, if-no-files-found: ignore }
+
+  app:
+    needs: [ffmpeg]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { pattern: ffmpeg-*, path: dl }
+      - name: Put FFmpeg in the app
+        run: |
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            if [ -f dl/ffmpeg-$abi/libffmpeg.so ]; then
+              mkdir -p android/app/src/main/jniLibs/$abi
+              cp dl/ffmpeg-$abi/libffmpeg.so android/app/src/main/jniLibs/$abi/
+              cat dl/ffmpeg-$abi/build-info.txt
+            else
+              echo "::warning::no FFmpeg for $abi"
+            fi
+          done
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: '8.11.1' }
+      - name: Build APKs
+        run: |
+          mkdir -p logs apk
+          gradle -p android --no-daemon --console=plain assembleDebug assembleRelease 2>&1 | tee logs/app-build.log
+          cp android/app/build/outputs/apk/release/*.apk apk/General-File-Compressor.apk
+          cp android/app/build/outputs/apk/debug/*.apk apk/gfc-debug.apk
+          ls -l apk
+      - uses: actions/upload-artifact@v4
+        with: { name: apk, path: apk }
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: log-app, path: logs, if-no-files-found: ignore }
+
+  test:
+    needs: [app]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: apk, path: apk }
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Make sample files
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q pillow
+          bash android/test/make_samples.sh samples
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          ram-size: 4096M
+          disk-size: 6000M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: bash android/test/run_emulator_test.sh apk/gfc-debug.apk samples test-out
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: test-out, path: test-out, if-no-files-found: ignore }
+
+  publish:
+    needs: [compile, ffmpeg, app, test]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: collected }
+      - name: Push results to the ci-out branch
+        run: |
+          mkdir out && cd out
+          git init -q -b ci-out
+          mkdir -p logs
+          for d in ../collected/log-*; do [ -d "$d" ] && cp -r "$d"/. logs/ || true; done
+          [ -d ../collected/test-out ] && cp -r ../collected/test-out test || true
+          [ -d ../collected/apk ] && cp -r ../collected/apk apk || true
+          for d in ../collected/ffmpeg-*; do [ -f "$d/build-info.txt" ] && cp "$d/build-info.txt" "logs/$(basename $d)-info.txt" || true; done
+          {
+            echo "run=${{ github.run_id }}"; echo "sha=${{ github.sha }}"
+            echo "compile=${{ needs.compile.result }}"; echo "ffmpeg=${{ needs.ffmpeg.result }}"
+            echo "app=${{ needs.app.result }}"; echo "test=${{ needs.test.result }}"
+          } > status.txt
+          cat status.txt
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "results of run ${{ github.run_id }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" ci-out
+
+  release:
+    needs: [app, test]
+    if: ${{ contains(github.event.head_commit.message, '[release]') && needs.app.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: apk, path: apk }
+      - name: Publish the APK as a GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VER=$(grep -oP 'versionName\s*=\s*"\K[^"]+' android/app/build.gradle.kts)
+          TAG="android-v$VER"
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" apk/General-File-Compressor.apk \
+            --target "${{ github.sha }}" --title "General File Compressor for Android $VER" \
+            --notes-file android/RELEASE_NOTES.md
