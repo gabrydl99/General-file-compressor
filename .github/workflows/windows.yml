@@ -1,0 +1,85 @@
+name: Windows app
+
+# Builds "General File Compressor.zip" (the Windows exe) on a GitHub Windows PC,
+# tries it on sample files, and publishes it as a release when the commit
+# message contains [release-windows].
+on:
+  push:
+    branches: [main, 'android**', 'windows**']
+    paths:
+      - 'general_file_compressor/**'
+      - 'packaging/**'
+      - 'main.py'
+      - 'requirements.txt'
+      - 'build_windows.bat'
+      - '.github/workflows/windows.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller imageio-ffmpeg
+          pip install --no-deps PyMuPDF
+          New-Item -ItemType Directory -Force packaging\ffmpeg | Out-Null
+          $ff = python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"
+          Copy-Item $ff packaging\ffmpeg\ffmpeg.exe
+      - name: Build the exe
+        run: pyinstaller --noconfirm --clean packaging\general_file_compressor.spec
+      - name: Try it on sample files
+        run: |
+          New-Item -ItemType Directory -Force test-out, samples | Out-Null
+          $ff = "packaging\ffmpeg\ffmpeg.exe"
+          & $ff -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=1280x720:rate=30 -f lavfi -i sine=frequency=440 -t 10 -c:v libx264 -crf 16 -pix_fmt yuv420p -c:a aac -shortest samples\video.mp4
+          & $ff -hide_banner -loglevel error -y -f lavfi -i sine=frequency=300 -t 20 samples\voice.wav
+          python -c "from PIL import Image, ImageFilter as F; mk=lambda w,h: Image.effect_noise((w//6,h//6),70).convert('RGB').resize((w,h)).filter(F.GaussianBlur(2)); mk(3000,2000).save('samples/photo.jpg', quality=95); mk(1700,2400).save('samples/scan.pdf', resolution=200, quality=95)"
+          $exe = "dist\General File Compressor\General File Compressor.exe"
+          $files = (Get-ChildItem samples).FullName
+          $cliArgs = @('--cli', '--percent', '30', '--keep-originals', '--out', "$PWD\test-out", '--log', "$PWD\test-out\results.txt") + $files
+          $p = Start-Process -FilePath $exe -ArgumentList ($cliArgs | ForEach-Object { '"' + $_ + '"' }) -Wait -PassThru
+          Get-Content test-out\results.txt
+          Get-ChildItem -Recurse test-out | Format-Table Name, Length
+          if ($p.ExitCode -ne 0) { Write-Error "the exe reported a failed file (exit $($p.ExitCode))" }
+          $made = (Get-ChildItem test-out\Compressed).Count
+          if ($made -lt 4) { Write-Error "only $made of 4 files were compressed" }
+      - name: Zip
+        run: Compress-Archive -Path "dist\General File Compressor" -DestinationPath "General File Compressor.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-zip
+          path: General File Compressor.zip
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-test
+          path: test-out
+          if-no-files-found: ignore
+      - name: Publish as a GitHub release
+        if: ${{ contains(github.event.head_commit.message, '[release-windows]') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ver = python -c "import general_file_compressor as g; print(g.__version__)"
+          $tag = "windows-v$ver"
+          gh release delete $tag --yes --cleanup-tag 2>$null
+          gh release create $tag "General File Compressor.zip" --target "${{ github.sha }}" `
+            --title "General File Compressor for Windows $ver" `
+            --notes "Download General.File.Compressor.zip, extract it and open General File Compressor.exe. If SmartScreen warns, click More info → Run anyway (the exe isn't signed). Keep the _internal folder next to the exe."
