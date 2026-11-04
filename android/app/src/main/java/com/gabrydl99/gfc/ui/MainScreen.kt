@@ -91,6 +91,7 @@ import com.gabrydl99.gfc.core.Settings
 import com.gabrydl99.gfc.core.Workspace
 import com.gabrydl99.gfc.core.extOf
 import com.gabrydl99.gfc.core.humanSize
+import com.gabrydl99.gfc.work.CompressService
 import com.gabrydl99.gfc.work.FileItem
 import com.gabrydl99.gfc.work.RunState
 import com.gabrydl99.gfc.work.Status
@@ -294,7 +295,7 @@ private fun FileRow(item: FileItem, s: Settings, locked: Boolean, onClick: () ->
         Status.WAITING -> "Waiting" to p.muted
         Status.WORKING -> "${(item.progress * 100).roundToInt()}%" to p.cobalt
         Status.DONE -> "Done" to p.success
-        Status.FAILED -> (if (item.result?.message?.startsWith("Already") == true) "Skipped" else "Failed") to p.danger
+        Status.FAILED -> if (CompressService.isSkip(item.result?.message ?: "")) "Skipped" to p.muted else "Failed" to p.danger
         Status.STOPPED -> "Stopped" to p.muted
     }
     Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp), verticalAlignment = Alignment.Top) {
@@ -540,7 +541,8 @@ private fun SwitchRow(title: String, checked: Boolean, enabled: Boolean, onChang
         Text(title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = p.ink, modifier = Modifier.weight(1f))
         Spacer(Modifier.width(12.dp))
         Switch(checked = checked, onCheckedChange = onChange, enabled = enabled,
-            colors = SwitchDefaults.colors(checkedTrackColor = p.cobalt, checkedThumbColor = Color.White))
+            colors = SwitchDefaults.colors(checkedTrackColor = p.cobalt, checkedThumbColor = Color.White,
+                uncheckedTrackColor = p.sunk, uncheckedThumbColor = p.muted, uncheckedBorderColor = p.muted))
     }
 }
 

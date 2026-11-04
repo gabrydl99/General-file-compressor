@@ -91,7 +91,7 @@ class CompressService : Service() {
                 break
             }
             if (r.ok) { done++; saved += (r.originalSize - r.newSize).coerceAtLeast(0) }
-            else if (r.message.startsWith("Already")) skipped++ else failed++
+            else if (isSkip(r.message)) skipped++ else failed++
             WorkRepo.edit(item.id) {
                 it.copy(status = if (r.ok) Status.DONE else Status.FAILED, progress = if (r.ok) 1f else it.progress, stage = "", result = r)
             }
@@ -105,7 +105,7 @@ class CompressService : Service() {
         }
         val parts = mutableListOf<String>()
         if (done > 0) parts += "$done done, ${humanSize(saved)} saved."
-        if (skipped > 0) parts += "$skipped skipped (already small enough)."
+        if (skipped > 0) parts += "$skipped skipped."
         if (failed > 0) parts += "$failed failed."
         if (aborted) parts += "Stopped."
         val summary = parts.joinToString(" ").ifEmpty { "Nothing was processed." }
@@ -182,6 +182,12 @@ class CompressService : Service() {
         const val NOTIF_PROGRESS = 1
         const val NOTIF_DONE = 2
         const val ACTION_ABORT = "com.gabrydl99.gfc.ABORT"
+
+        /** Not an error: the file was left alone on purpose. */
+        fun isSkip(message: String): Boolean {
+            val m = message.lowercase()
+            return "already" in m || "can only be compressed" in m || "pick a" in m
+        }
         @Volatile private var active = false
 
         fun createChannels(ctx: Context) {

@@ -1,8 +1,13 @@
-# Android app — where the work stopped and how to continue
+# Android app — status and how to continue
 
-Written on 2026-11-04 at the end of the first session. Branch: **`android`** of
-`gabrydl99/General-file-compressor`. The Windows app (Python, root of the repo) is the
-reference: the Android engines are ports of `general_file_compressor/*.py`.
+**Status 2026-11-05 ~01:00:** the code is on GitHub (branch `android`). GitHub Actions builds FFmpeg
+(cached), the APK and runs the emulator test; everything compiles and works except **WebM (VP9)**:
+libvpx-vp9 fails with "Invalid argument" on the emulator. A one-pass fallback and a diagnostics
+section (`test/results/ffmpeg-diag.txt` on `ci-out`) were added to find out why. The Windows exe is
+also built and tested by `.github/workflows/windows.yml` (all 4 sample files OK).
+Releases: the safety check refused publishing a public release without the user's explicit OK —
+ask before adding `[release]` / `[release-windows]` to a commit message.
+Commit messages: no "Claude-Session" link (it made pushes to this public repo be refused).
 
 ## Start here
 

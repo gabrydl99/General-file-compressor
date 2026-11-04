@@ -210,7 +210,9 @@ object Ffmpeg {
         if (job.cancelled) throw CancelledException()
         if (stalled.get()) throw CompressionError("FFmpeg stopped responding while working on this file.")
         if (p.exitValue() != 0) {
-            val msg = synchronized(errors) { errors.joinToString(" ") { it.trim() } }.takeLast(300)
+            val lines = synchronized(errors) { errors.map { it.trim() }.filter { it.isNotEmpty() } }
+            val key = lines.firstOrNull { Regex("(?i)error|failed|invalid|unsupported|not found").containsMatchIn(it) }
+            val msg = ((key?.let { listOf(it) } ?: emptyList()) + lines.takeLast(3)).distinct().joinToString(" ").take(400)
             if ("No space left" in msg) throw CompressionError("The phone storage is full.")
             if ("Permission denied" in msg) throw CompressionError("Android didn't allow writing in the output folder. $msg".trim())
             throw CompressionError("FFmpeg could not process the file. $msg".trim())

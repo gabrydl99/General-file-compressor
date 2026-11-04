@@ -75,6 +75,23 @@ adb shell wm size 2560x1600; adb shell wm density 320; sleep 3
 adb shell am force-stop $PKG; adb shell am start -W -n $ACT; sleep 4; shot 70-tablet
 adb shell wm size reset; adb shell wm density reset
 
+# FFmpeg diagnostics, run as the app
+push_samples
+APKP=$(adb shell pm path $PKG | head -1 | sed 's/package://' | tr -d '\r')
+LIB=$(dirname "$APKP")/lib/x86_64/libffmpeg.so
+V="$IN/lesson.mkv"
+{
+  echo "lib: $LIB"
+  adb shell run-as $PKG "$LIB" -hide_banner -version | head -3
+  adb shell run-as $PKG "$LIB" -hide_banner -encoders 2>/dev/null | grep -E "x264|vpx|lame|opus|vorbis| aac"
+  for args in "-row-mt 1 -deadline good -cpu-used 5 -pass 1" "-deadline good -cpu-used 5 -pass 1" \
+              "-row-mt 1 -deadline good -cpu-used 5" "-cpu-used 5" "-threads 1 -cpu-used 5"; do
+    echo "== libvpx-vp9 $args"
+    adb shell run-as $PKG "$LIB" -hide_banner -nostdin -y -loglevel verbose -t 2 -i "'$V'" -an -c:v libvpx-vp9 -b:v 300k $args \
+      -passlogfile /data/data/$PKG/cache/vp9 -f null - 2>&1 | grep -viE "^\s*(frame|Stream|Metadata|  )" | tail -15
+  done
+} > "$OUT/results/ffmpeg-diag.txt" 2>&1
+
 # Check the results on the computer side
 {
   for f in $(find "$OUT/results" -type f \( -name '*_compressed*' \) | sort); do

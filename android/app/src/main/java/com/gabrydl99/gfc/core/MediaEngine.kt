@@ -149,16 +149,32 @@ object MediaEngine {
                 job, info.duration, lo, hi, label)
         }
 
+        fun encodeOnePass(vkbps: Double) {
+            val audio = if (info.hasAudio) listOf("-map", "0:a:0", "-c:a", if (Ffmpeg.has("libopus")) "libopus" else "libvorbis",
+                "-b:a", "${audioKbps}k", "-ac", "${if (audioKbps <= 40) 1 else 2}") else emptyList()
+            Ffmpeg.run(listOf("-i", src.file.absolutePath, "-map", "0:v:0", "-vf", vf, "-fps_mode", "passthrough",
+                "-c:v", "libvpx-vp9", "-b:v", "${vkbps.toInt()}k", "-maxrate", "${(vkbps * 1.3).toInt()}k",
+                "-row-mt", "1", "-deadline", "good", "-cpu-used", vp9Speed(s)) + audio +
+                containerArgs(fmt, info, false) + listOf(out.absolutePath), job, info.duration, 0f, 1f, "Compressing")
+        }
+
         val newSize: Long
         try {
-            encode(videoKbps, true, 0f, 0.35f, "Analyzing")
-            encode(videoKbps, false, 0.35f, 1f, "Compressing")
+            var twoPass = true
+            try {
+                encode(videoKbps, true, 0f, 0.35f, "Analyzing")
+            } catch (e: CompressionError) {
+                if (!webm) throw e
+                twoPass = false   // some VP9 builds refuse the analysis pass: encode in one pass instead
+            }
+            if (twoPass) encode(videoKbps, false, 0.35f, 1f, "Compressing")
+            else encodeOnePass(videoKbps)
             var n = out.length()
             if (n > target * 1.04 && videoKbps > 40) {
                 val audioBytes = audioKbps * 1000 / 8.0 * info.duration
                 val factor = (target - audioBytes) / max(1.0, n - audioBytes)
                 videoKbps = max(40.0, videoKbps * factor * 0.97)
-                encode(videoKbps, false, 0.35f, 1f, "Fine-tuning size")
+                if (twoPass) encode(videoKbps, false, 0.35f, 1f, "Fine-tuning size") else encodeOnePass(videoKbps)
                 n = out.length()
             }
             newSize = n
