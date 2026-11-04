@@ -66,7 +66,7 @@ class CompressService : Service() {
         val queue = WorkRepo.pending()
         val settings = WorkRepo.settings.value
         WorkRepo.setRun { RunState(running = true, total = queue.size, index = 0) }
-        var done = 0; var failed = 0; var saved = 0L; var aborted = false
+        var done = 0; var failed = 0; var skipped = 0; var saved = 0L; var aborted = false
         val report = JSONArray()
         for ((i, item) in queue.withIndex()) {
             if (WorkRepo.run.value.aborting) { aborted = true; break }
@@ -90,7 +90,8 @@ class CompressService : Service() {
                 WorkRepo.edit(item.id) { it.copy(status = Status.STOPPED, progress = 0f, stage = "Stopped — original untouched") }
                 break
             }
-            if (r.ok) { done++; saved += (r.originalSize - r.newSize).coerceAtLeast(0) } else failed++
+            if (r.ok) { done++; saved += (r.originalSize - r.newSize).coerceAtLeast(0) }
+            else if (r.message.startsWith("Already")) skipped++ else failed++
             WorkRepo.edit(item.id) {
                 it.copy(status = if (r.ok) Status.DONE else Status.FAILED, progress = if (r.ok) 1f else it.progress, stage = "", result = r)
             }
@@ -104,14 +105,15 @@ class CompressService : Service() {
         }
         val parts = mutableListOf<String>()
         if (done > 0) parts += "$done done, ${humanSize(saved)} saved."
-        if (failed > 0) parts += "$failed couldn't be compressed."
+        if (skipped > 0) parts += "$skipped skipped (already small enough)."
+        if (failed > 0) parts += "$failed failed."
         if (aborted) parts += "Stopped."
         val summary = parts.joinToString(" ").ifEmpty { "Nothing was processed." }
         WorkRepo.setRun { RunState(running = false, total = queue.size, index = queue.size, summary = summary) }
         WorkRepo.reportFile?.let { f ->
             runCatching {
                 f.writeText(JSONObject().apply {
-                    put("summary", summary); put("done", done); put("failed", failed); put("aborted", aborted)
+                    put("summary", summary); put("done", done); put("failed", failed); put("skipped", skipped); put("aborted", aborted)
                     put("items", report)
                 }.toString(2))
             }

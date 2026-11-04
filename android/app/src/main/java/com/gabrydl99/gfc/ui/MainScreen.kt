@@ -597,7 +597,7 @@ private fun ActionBar(items: List<FileItem>, run: RunState, onCompress: () -> Un
                     run.aborting && run.running -> "Stopping…"
                     run.running -> "File ${run.index} of ${run.total}" +
                         (items.firstOrNull { it.status == Status.WORKING }?.let { " · ${it.stage}" } ?: "")
-                    run.summary.isNotEmpty() && pending == 0 -> run.summary
+                    run.summary.isNotEmpty() && pending == 0 && items.isNotEmpty() -> run.summary
                     pending > 0 -> "$pending file${if (pending == 1) "" else "s"} ready"
                     else -> "Add some files to get started."
                 }

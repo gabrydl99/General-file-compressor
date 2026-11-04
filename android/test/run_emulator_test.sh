@@ -11,6 +11,10 @@ IN=/sdcard/Download/gfc-in
 RES="/sdcard/Download/General File Compressor"
 mkdir -p "$OUT/shots" "$OUT/results"
 shot() { adb exec-out screencap -p > "$OUT/shots/$1.png"; }
+scroll() {  # swipe up by about two thirds of the screen
+  local wh w h; wh=$(adb shell wm size | tail -1 | grep -oE '[0-9]+x[0-9]+'); w=${wh%x*}; h=${wh#*x}
+  adb shell input swipe $((w / 2)) $((h * 3 / 4)) $((w / 2)) $((h / 5)) 400
+}
 
 adb wait-for-device
 adb shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 2; done'
@@ -46,7 +50,7 @@ run_case() {  # run_case <name> <settings json> <timeout s>
   sleep 2
   adb pull "$report" "$OUT/results/report-$name.json" >/dev/null || echo "no report for $name"
   shot "$name-9-done"
-  adb shell input swipe 540 1600 540 400 300; sleep 1; shot "$name-9-done-scrolled"
+  scroll; sleep 1; shot "$name-9-done-scrolled"
   adb shell ls -lR "'$RES'" > "$OUT/results/listing-$name.txt" 2>&1
   mkdir -p "$OUT/results/$name"
   adb pull "$RES/Compressed" "$OUT/results/$name/" >/dev/null 2>&1
@@ -56,15 +60,15 @@ run_case() {  # run_case <name> <settings json> <timeout s>
 run_case percent '{"mode":"PERCENT","percent":30,"moveOriginals":true}' 1500
 run_case mb '{"mode":"MB","targetMb":2,"moveOriginals":false,"speed":"fast"}' 1500
 run_case convert '{"mode":"CONVERT","videoFormat":"mkv","imageFormat":"webp","audioFormat":"opus","moveOriginals":false}' 1200
-run_case whatsapp '{"mode":"MB","targetMb":15,"videoFormat":"mp4","imageFormat":"jpg","preset":"WHATSAPP","moveOriginals":false,"pdfAsPictures":true}' 1200
+run_case mixed '{"mode":"PERCENT","percent":25,"videoFormat":"webm","imageFormat":"png","audioFormat":"ogg","speed":"fast","pdfAsPictures":true,"moveOriginals":false}' 2400
 
 # The settings screen, light and dark, scrolled through
 adb shell am start -n $ACT --ez gfc_test_clear true --es gfc_test_settings "'{\"mode\":\"PERCENT\",\"percent\":30}'"
 sleep 3; shot 50-light-top
-for i in 1 2 3; do adb shell input swipe 540 1700 540 500 400; sleep 1; shot 51-light-scroll-$i; done
+for i in 1 2 3 4; do scroll; sleep 1; shot 51-light-scroll-$i; done
 adb shell cmd uimode night yes; sleep 3
 adb shell am force-stop $PKG; adb shell am start -W -n $ACT; sleep 4; shot 60-dark-top
-for i in 1 2 3; do adb shell input swipe 540 1700 540 500 400; sleep 1; shot 61-dark-scroll-$i; done
+for i in 1 2 3 4; do scroll; sleep 1; shot 61-dark-scroll-$i; done
 adb shell cmd uimode night no
 # Wide screen (tablet / landscape)
 adb shell wm size 2560x1600; adb shell wm density 320; sleep 3
