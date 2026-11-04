@@ -24,16 +24,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: '17' }
+        with:
+          distribution: temurin
+          java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: '8.11.1' }
+        with:
+          gradle-version: '8.11.1'
       - name: Compile
         run: |
           mkdir -p logs
           gradle -p android --no-daemon --console=plain compileDebugKotlin 2>&1 | tee logs/compile.log
       - if: always()
         uses: actions/upload-artifact@v4
-        with: { name: log-compile, path: logs, if-no-files-found: ignore }
+        with:
+          name: log-compile
+          path: logs
+          if-no-files-found: ignore
 
   ffmpeg:
     runs-on: ubuntu-latest
@@ -56,10 +62,15 @@ jobs:
           mkdir -p logs
           WORK_DIR=$RUNNER_TEMP/ffbuild bash android/ffmpeg/build_ffmpeg.sh ${{ matrix.abi }} android/ffmpeg/out/${{ matrix.abi }} 2>&1 | tee logs/ffmpeg-${{ matrix.abi }}.log
       - uses: actions/upload-artifact@v4
-        with: { name: ffmpeg-${{ matrix.abi }}, path: android/ffmpeg/out/${{ matrix.abi }} }
+        with:
+          name: ffmpeg-${{ matrix.abi }}
+          path: android/ffmpeg/out/${{ matrix.abi }}
       - if: always()
         uses: actions/upload-artifact@v4
-        with: { name: log-ffmpeg-${{ matrix.abi }}, path: logs, if-no-files-found: ignore }
+        with:
+          name: log-ffmpeg-${{ matrix.abi }}
+          path: logs
+          if-no-files-found: ignore
 
   app:
     needs: [ffmpeg]
@@ -68,7 +79,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with: { pattern: ffmpeg-*, path: dl }
+        with:
+          pattern: ffmpeg-*
+          path: dl
       - name: Put FFmpeg in the app
         run: |
           for abi in arm64-v8a armeabi-v7a x86_64; do
@@ -81,21 +94,36 @@ jobs:
             fi
           done
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: '17' }
+        with:
+          distribution: temurin
+          java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: '8.11.1' }
+        with:
+          gradle-version: '8.11.1'
       - name: Build APKs
+        env:
+          GFC_KEYSTORE_B64: ${{ secrets.GFC_KEYSTORE_B64 }}
+          GFC_KEYSTORE_PASSWORD: ${{ secrets.GFC_KEYSTORE_PASSWORD }}
         run: |
+          if [ -n "$GFC_KEYSTORE_B64" ]; then
+            echo "$GFC_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/gfc.jks"
+            export GFC_KEYSTORE="$RUNNER_TEMP/gfc.jks"
+          fi
           mkdir -p logs apk
           gradle -p android --no-daemon --console=plain assembleDebug assembleRelease 2>&1 | tee logs/app-build.log
           cp android/app/build/outputs/apk/release/*.apk apk/General-File-Compressor.apk
           cp android/app/build/outputs/apk/debug/*.apk apk/gfc-debug.apk
           ls -l apk
       - uses: actions/upload-artifact@v4
-        with: { name: apk, path: apk }
+        with:
+          name: apk
+          path: apk
       - if: always()
         uses: actions/upload-artifact@v4
-        with: { name: log-app, path: logs, if-no-files-found: ignore }
+        with:
+          name: log-app
+          path: logs
+          if-no-files-found: ignore
 
   test:
     needs: [app]
@@ -104,7 +132,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with: { name: apk, path: apk }
+        with:
+          name: apk
+          path: apk
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -126,19 +156,28 @@ jobs:
           script: bash android/test/run_emulator_test.sh apk/gfc-debug.apk samples test-out
       - if: always()
         uses: actions/upload-artifact@v4
-        with: { name: test-out, path: test-out, if-no-files-found: ignore }
+        with:
+          name: test-out
+          path: test-out
+          if-no-files-found: ignore
 
   publish:
     needs: [compile, ffmpeg, app, test]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
+      # checkout keeps the job's own GitHub login for the push below
+      - uses: actions/checkout@v4
+        with:
+          path: out
       - uses: actions/download-artifact@v4
-        with: { path: collected }
+        with:
+          path: collected
       - name: Push results to the ci-out branch
+        working-directory: out
         run: |
-          mkdir out && cd out
-          git init -q -b ci-out
+          git checkout -q --orphan ci-out
+          git rm -rq --cached . && git clean -fdxq -e .git
           mkdir -p logs
           for d in ../collected/log-*; do [ -d "$d" ] && cp -r "$d"/. logs/ || true; done
           [ -d ../collected/test-out ] && cp -r ../collected/test-out test || true
@@ -152,7 +191,7 @@ jobs:
           cat status.txt
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "results of run ${{ github.run_id }}"
-          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" ci-out
+          git push -f origin ci-out
 
   release:
     needs: [app, test]
@@ -161,7 +200,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
-        with: { name: apk, path: apk }
+        with:
+          name: apk
+          path: apk
       - name: Publish the APK as a GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
