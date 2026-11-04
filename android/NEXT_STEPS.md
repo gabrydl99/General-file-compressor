@@ -1,10 +1,14 @@
 # Android app — status and how to continue
 
-**Status 2026-11-05 ~01:00:** the code is on GitHub (branch `android`). GitHub Actions builds FFmpeg
-(cached), the APK and runs the emulator test; everything compiles and works except **WebM (VP9)**:
-libvpx-vp9 fails with "Invalid argument" on the emulator. A one-pass fallback and a diagnostics
-section (`test/results/ffmpeg-diag.txt` on `ci-out`) were added to find out why. The Windows exe is
-also built and tested by `.github/workflows/windows.yml` (all 4 sample files OK).
+**Status 2026-11-05 ~01:30:** the code is on GitHub (branch `android`). GitHub Actions builds FFmpeg
+(cached), the APK and runs the emulator test (4 scenarios: percent, MB, convert, mixed). All 40 files
+pass. WebM: libvpx-vp9 two-pass fails with "Invalid argument" on the emulator (cause unknown; `run-as`
+diagnostics can't read /sdcard), so the app falls back to one-pass VP9, which works. The APK
+(`apk/General-File-Compressor.apk` on `ci-out`, arm64 + armv7, ~38 MB) was sent to the user in chat;
+it's signed with a debug key kept in the Actions cache `gfc-debug-keystore-v1` (expires if unused
+for 7 days → then a new APK needs uninstalling the old one; a permanent key needs repo secrets).
+The Windows exe is also built and tested by `.github/workflows/windows.yml` (all 4 sample files OK).
+Still to do: test on the user's real phone; merge `android` into `main` when the user is happy.
 Releases: the safety check refused publishing a public release without the user's explicit OK —
 ask before adding `[release]` / `[release-windows]` to a commit message.
 Commit messages: no "Claude-Session" link (it made pushes to this public repo be refused).
