@@ -62,6 +62,24 @@ jobs:
           if ($made -lt 4) { Write-Error "only $made of 4 files were compressed" }
       - name: Zip
         run: Compress-Archive -Path "dist\General File Compressor" -DestinationPath "General File Compressor.zip"
+      # The zip is ~100 MB: it goes to the ci-out-windows branch in parts under GitHub's
+      # 100 MB file limit, so it can be fetched with git and joined again.
+      - uses: actions/checkout@v4
+        with:
+          path: out
+      - name: Push the zip to the ci-out-windows branch
+        shell: bash
+        working-directory: out
+        run: |
+          git checkout -q --orphan ci-out-windows
+          git rm -rq --cached . && git clean -fdxq
+          split -b 45m "../General File Compressor.zip" "General File Compressor.zip.part_"
+          cp ../test-out/results.txt test-results.txt 2>/dev/null || true
+          sha256sum "../General File Compressor.zip" | cut -d' ' -f1 > sha256.txt
+          echo "${{ github.sha }}" > sha.txt
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "Windows build of ${{ github.sha }}"
+          git push -f origin ci-out-windows
       - uses: actions/upload-artifact@v4
         with:
           name: windows-zip
