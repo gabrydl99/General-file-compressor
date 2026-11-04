@@ -80,9 +80,10 @@ fetch() {  # fetch <dest.tar.gz> <url>...
 newer_config() {  # refresh config.sub/config.guess so old autotools know Android
   for f in config.sub config.guess; do
     for d in /usr/share/misc /usr/share/automake-*; do
-      [ -f "$d/$f" ] && cp "$d/$f" "./$f" && break
+      if [ -f "$d/$f" ]; then cp "$d/$f" "./$f"; break; fi
     done
   done
+  return 0
 }
 
 autotools_build() {  # autotools_build <dir> <configure args...>
