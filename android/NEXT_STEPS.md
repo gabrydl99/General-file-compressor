@@ -7,12 +7,14 @@ check at start-up (`core/Updates.kt` + `UpdateDialog` in MainScreen: GitHub rele
 asset → download → system installer; REQUEST_INSTALL_PACKAGES + INTERNET).
 
 **Release process (agreed with the user, who asked for exe and APK on GitHub releases):**
-push to `main` → both workflows build (Android branch builds also run the emulator test) → push tag
-`vX.Y.Z` → each workflow adds its file to the release via `.github/scripts/release_upload.sh`, which
-keeps it a draft until both `General-File-Compressor-Windows.zip` and
-`General-File-Compressor-Android.apk` are there, then publishes it as latest.
-Signing: debug key in the Actions cache `gfc-debug-keystore-v1`. Tag builds only see caches made on
-`main`, so main must build once before the first tag; `keepalive.yml` reads the cache every 3 days so
+this session can't push tags or edit releases (proxy), so GitHub does it: on a push to `main`,
+each workflow (Windows after its build, Android after app + emulator test) runs
+`.github/scripts/release_upload.sh`, which adds its file to release `v<__version__>`: draft until
+both `General-File-Compressor-Windows.zip` and `General-File-Compressor-Android.apk` are there, then
+published as latest (GitHub creates the tag). Already published → nothing happens; raise
+`__version__` for a new release.
+Signing: debug key in the Actions cache `gfc-debug-keystore-v1`. Caches made on `main` are readable by every
+branch; `keepalive.yml` reads the cache every 3 days so
 it doesn't expire. The very first main-made key differs from the test APK sent in chat on 2026-11-05
 (made on the `android` branch): that one has to be uninstalled once before installing 1.2.0.
 Stray release `windows-v1.0.0` was created by accident (commit message contained the old marker);

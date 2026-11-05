@@ -14,8 +14,7 @@ Both apps check for a newer release at start-up.
 ## Making a release
 
 1. Raise `__version__` in `general_file_compressor/__init__.py` (Android uses the same number) and update `RELEASE_NOTES.md`.
-2. Push to `main` and wait until the **Windows exe** and **Android app** workflows pass.
-3. Push a tag with that number, e.g. `git tag v1.3.0 && git push origin v1.3.0`. GitHub builds both apps, adds them to the release and publishes it when both files are there.
+2. Push to `main`. When the **Windows exe** and **Android app** workflows pass (the Android one also runs the app on an emulator), GitHub publishes release `v<version>` with both files. Pushes that don't change the version don't make a release.
 
 ## Where the files go
 

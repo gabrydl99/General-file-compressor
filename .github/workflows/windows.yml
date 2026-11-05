@@ -1,12 +1,11 @@
 name: Windows exe
 
 # Builds the Windows app (a folder with the exe, zipped) on a GitHub Windows PC and
-# tries it on sample files. On a version tag (v1.2.0, …) the zip is added to that
-# release; the release is published once the Android APK is there too.
+# tries it on sample files. On main, the zip is added to the release of the current
+# version (see .github/scripts/release_upload.sh), published once the APK is there too.
 on:
   push:
     branches: [main, 'android**', 'windows**']
-    tags: ['v*']
     paths:
       - 'general_file_compressor/**'
       - 'packaging/**'
@@ -58,9 +57,6 @@ jobs:
         run: |
           VER=$(python -c "import re;print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', open('general_file_compressor/__init__.py').read()).group(1))")
           echo "App version $VER"
-          if [[ "$GITHUB_REF" == refs/tags/v* && "${GITHUB_REF_NAME#v}" != "$VER" ]]; then
-            echo "::error::Tag $GITHUB_REF_NAME doesn't match __version__ $VER"; exit 1
-          fi
           # the exe's file properties follow __version__
           python - "$VER" <<'PY'
           import re, sys
@@ -111,11 +107,9 @@ jobs:
       # For checking builds from the chat: the ~100 MB zip goes to the
       # ci-out-windows branch in parts under GitHub's 100 MB file limit.
       - uses: actions/checkout@v4
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         with:
           path: out
       - name: Push the zip to the ci-out-windows branch
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         shell: bash
         working-directory: out
         run: |
@@ -131,11 +125,11 @@ jobs:
 
   release:
     needs: [build]
-    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     runs-on: ubuntu-latest
-    # one release job at a time per tag, also across the Android workflow
+    # one release job at a time per commit, also across the Android workflow
     concurrency:
-      group: release-${{ github.ref }}
+      group: release-${{ github.sha }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
