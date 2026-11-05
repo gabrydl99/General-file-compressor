@@ -105,6 +105,9 @@ QPushButton#Link {{ background: transparent; border: none; color: {COBALT}; padd
 QPushButton#Link:hover {{ text-decoration: underline; }}
 QPushButton#Remove {{ background: transparent; border: none; color: {MUTED}; font-size: 15px; padding: 2px 6px; }}
 QPushButton#Remove:hover {{ color: {DANGER}; }}
+QPushButton#Retry {{ background: transparent; border: 1px solid {LINE}; border-radius: 6px; color: {COBALT};
+    font-size: 14px; font-weight: 700; padding: 0; }}
+QPushButton#Retry:hover {{ border-color: {COBALT}; }}
 QPushButton#Chip {{ background: {SUNK}; border: 1px solid {LINE}; border-radius: 8px; padding: 5px 0; font-size: 12px; color: {MUTED}; }}
 QPushButton#Chip:hover {{ border-color: {COBALT}; color: {COBALT}; }}
 QPushButton:focus {{ outline: none; }}
