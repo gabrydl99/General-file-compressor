@@ -62,6 +62,24 @@ run_case mb '{"mode":"MB","targetMb":2,"moveOriginals":false,"speed":"fast"}' 15
 run_case convert '{"mode":"CONVERT","videoFormat":"mkv","imageFormat":"webp","audioFormat":"opus","moveOriginals":false}' 1200
 run_case mixed '{"mode":"PERCENT","percent":25,"videoFormat":"webm","imageFormat":"png","audioFormat":"ogg","speed":"fast","pdfAsPictures":true,"moveOriginals":false}' 2400
 
+# Update flow: a fake newer release whose APK is this same app
+adb push "$APK" /sdcard/Download/gfc-update.apk >/dev/null
+cat > "$OUT/fake-release.json" <<JSON
+{"tag_name": "v99.0.0", "html_url": "https://github.com/gabrydl99/General-file-compressor/releases",
+ "body": "**Test release** used by the emulator test.",
+ "assets": [{"name": "General-File-Compressor-Android.apk", "size": $(stat -c %s "$APK"),
+             "browser_download_url": "file:///sdcard/Download/gfc-update.apk"}]}
+JSON
+adb push "$OUT/fake-release.json" /sdcard/Download/gfc-fake-release.json >/dev/null
+adb shell appops set $PKG REQUEST_INSTALL_PACKAGES allow
+adb shell am start -n $ACT --ez gfc_test_clear true --es gfc_test_update_json /sdcard/Download/gfc-fake-release.json
+sleep 5; shot 80-update-available
+adb shell am start -n $ACT --es gfc_test_update_json /sdcard/Download/gfc-fake-release.json --ez gfc_test_update_now true
+sleep 3; shot 81-update-downloading
+sleep 12; shot 82-update-installer
+adb shell input keyevent KEYCODE_BACK; sleep 2
+adb logcat -d -s GfcUpdate > "$OUT/results/update-log.txt" 2>&1
+
 # The settings screen, light and dark, scrolled through
 adb shell am start -n $ACT --ez gfc_test_clear true --es gfc_test_settings "'{\"mode\":\"PERCENT\",\"percent\":30}'"
 sleep 3; shot 50-light-top

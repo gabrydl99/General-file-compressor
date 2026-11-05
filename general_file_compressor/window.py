@@ -181,6 +181,9 @@ def expected_ext(path: Path, s: Settings) -> str:
 
 # ---------------------------------------------------------------- files
 
+DISCORD_TARGET_MB = 19  # Discord free upload limit is 20 MB (since August 2026)
+
+
 @dataclass
 class FileItem:
     path: Path
@@ -197,6 +200,7 @@ TILE_TEXT = {KIND_VIDEO: "VID", KIND_IMAGE: "IMG", KIND_PDF: "PDF", KIND_AUDIO: 
 class FileRow(QFrame):
     removeRequested = Signal(object)
     whyRequested = Signal(object)
+    retryRequested = Signal(object)
     menuRequested = Signal(object, object)
 
     def __init__(self, item: FileItem):
@@ -238,6 +242,11 @@ class FileRow(QFrame):
         self.why = button("Why did it fail?", "Link", lambda: self.whyRequested.emit(self.item))
         self.why.hide()
         bottom.addWidget(self.why)
+        self.retry = button("↻", "Retry", lambda: self.retryRequested.emit(self.item))
+        self.retry.setToolTip("Try again with the current settings")
+        self.retry.setFixedSize(26, 22)
+        self.retry.hide()
+        bottom.addWidget(self.retry)
         mid.addLayout(bottom)
         h.addLayout(mid, 1)
 
@@ -414,6 +423,9 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(1020, 680))
         self.resize(1180, 780)
         self.setAcceptDrops(True)
+        from . import __version__
+        from .updates import UpdateChecker
+        self.updates = UpdateChecker(self, APP_NAME, __version__)
 
         root = QWidget()
         root.setObjectName("Root")
@@ -556,6 +568,9 @@ class MainWindow(QMainWindow):
         for val in (5, 10, 25, 50, 100):
             c = button(f"{val} MB", "Chip", lambda _c=False, x=val: self.spin.setValue(x))
             chips.addWidget(c)
+        dc = button("Discord", "Chip", lambda: self.spin.setValue(DISCORD_TARGET_MB))
+        dc.setToolTip("Discord free accounts can send files up to 20 MB: aims at 19 MB to stay under it")
+        chips.addWidget(dc)
         mv.addLayout(chips)
         self.size_stack.addWidget(mp)
 
@@ -782,6 +797,7 @@ class MainWindow(QMainWindow):
             row = FileRow(it)
             row.removeRequested.connect(self.remove_item)
             row.whyRequested.connect(self.show_why)
+            row.retryRequested.connect(self.retry_item)
             row.menuRequested.connect(self.item_menu)
             it.row = row
             self.rows.insertWidget(self.rows.count() - 1, row)
@@ -850,7 +866,7 @@ class MainWindow(QMainWindow):
             m.addAction("Show the file in its folder", lambda: reveal(it.path))
         if it.state == FAILED:
             m.addAction("Why did it fail?", lambda: self.show_why(it))
-            m.addAction("Try again", lambda: self._reset_item(it))
+            m.addAction("Try again", lambda: self.retry_item(it))
         if it.state != WORKING and not self.worker:
             m.addAction("Remove from the list", lambda: self.remove_item(it))
         m.exec(pos)
@@ -860,6 +876,7 @@ class MainWindow(QMainWindow):
         if it.row:
             it.row.bar.setValue(0)
             it.row.why.hide()
+            it.row.retry.hide()
             it.row.setProperty("state", "")
             repolish(it.row)
             it.row.set_status("Waiting")
@@ -900,8 +917,15 @@ class MainWindow(QMainWindow):
         self.btn_abort.setEnabled(True)
         self.btn_abort.setText("Abort")
 
-    def start(self) -> None:
-        todo = self.pending()
+    def retry_item(self, it: FileItem) -> None:
+        """Run one failed file again, with the settings currently chosen (not the ones of the first try)."""
+        if self.worker or it.state != FAILED:
+            return
+        self._reset_item(it)
+        self.start([it])
+
+    def start(self, only: Optional[list] = None) -> None:
+        todo = only if only else self.pending()
         if not todo or self.worker:
             return
         s = self.settings()
@@ -968,6 +992,7 @@ class MainWindow(QMainWindow):
                 row.set_status("Failed", "bad")
                 row.meta.setText(r.message)
                 row.why.show()
+                row.retry.show()
                 row.setProperty("state", "failed")
                 repolish(row)
         self.overall.setValue(int(self.finished / max(1, self.total) * 1000))

@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -81,6 +82,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gabrydl99.gfc.BuildConfig
 import com.gabrydl99.gfc.core.Diagnoses
 import com.gabrydl99.gfc.core.Ffmpeg
 import com.gabrydl99.gfc.core.Kind
@@ -88,6 +90,7 @@ import com.gabrydl99.gfc.core.MB
 import com.gabrydl99.gfc.core.Mode
 import com.gabrydl99.gfc.core.Preset
 import com.gabrydl99.gfc.core.Settings
+import com.gabrydl99.gfc.core.Updates
 import com.gabrydl99.gfc.core.Workspace
 import com.gabrydl99.gfc.core.extOf
 import com.gabrydl99.gfc.core.humanSize
@@ -163,6 +166,7 @@ fun MainScreen(
     }
 
     why?.let { WhyDialog(it) { why = null } }
+    UpdateDialog(activity)
     sheet?.let { s ->
         val live = items.firstOrNull { it.id == s.id } ?: s
         ItemSheet(live, locked,
@@ -681,5 +685,65 @@ private fun ItemSheet(
                 if (item.status != Status.WORKING) SecondaryButton("Remove from the list", modifier = Modifier.fillMaxWidth(), onClick = onRemove)
             }
         }
+    }
+}
+
+@Composable
+private fun UpdateDialog(activity: MainActivity) {
+    val st by Updates.state.collectAsStateWithLifecycle()
+    val p = LocalPalette.current
+    LaunchedEffect(st) {
+        val s = st
+        if (s is Updates.State.Ready) activity.installUpdate(s.info, s.file)
+    }
+    when (val s = st) {
+        is Updates.State.Available -> AlertDialog(
+            onDismissRequest = { Updates.dismiss() },
+            title = { Text("Update available", style = MaterialTheme.typography.titleMedium) },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Text("General File Compressor ${s.info.version} is ready to install. You have ${BuildConfig.VERSION_NAME}.",
+                        style = MaterialTheme.typography.bodyMedium, color = p.ink)
+                    if (s.info.size > 0) Caption("Download: ${humanSize(s.info.size)}")
+                    if (s.info.notes.isNotBlank()) {
+                        Spacer(Modifier.height(10.dp))
+                        Text(s.info.notes, style = MaterialTheme.typography.bodySmall, color = p.muted)
+                    }
+                }
+            },
+            confirmButton = { TextButton(onClick = { activity.startUpdate(s.info) }) { Text("Update") } },
+            dismissButton = { TextButton(onClick = { Updates.dismiss() }) { Text("Later") } })
+        is Updates.State.Downloading -> AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Downloading the update", style = MaterialTheme.typography.titleMedium) },
+            text = {
+                Column {
+                    LinearProgressIndicator(progress = { s.progress }, modifier = Modifier.fillMaxWidth().height(8.dp),
+                        color = p.cobalt, trackColor = p.sunk, drawStopIndicator = {})
+                    Spacer(Modifier.height(10.dp))
+                    Caption("${(s.progress * 100).roundToInt()}%" + if (s.info.size > 0) " of ${humanSize(s.info.size)}" else "")
+                }
+            },
+            confirmButton = {},
+            dismissButton = { TextButton(onClick = { Updates.dismiss() }) { Text("Cancel") } })
+        is Updates.State.NeedsPermission -> AlertDialog(
+            onDismissRequest = { Updates.dismiss() },
+            title = { Text("One more step", style = MaterialTheme.typography.titleMedium) },
+            text = {
+                Text("Allow General File Compressor to install the update: turn on \"Allow from this source\", " +
+                    "then come back here.", style = MaterialTheme.typography.bodyMedium, color = p.ink)
+            },
+            confirmButton = { TextButton(onClick = { activity.installUpdate(s.info, s.file) }) { Text("Continue") } },
+            dismissButton = { TextButton(onClick = { Updates.dismiss() }) { Text("Later") } })
+        is Updates.State.Failed -> AlertDialog(
+            onDismissRequest = { Updates.dismiss() },
+            title = { Text("The update didn't download", style = MaterialTheme.typography.titleMedium) },
+            text = {
+                Text("${s.message}\n\nYou can download it from its GitHub page instead.",
+                    style = MaterialTheme.typography.bodyMedium, color = p.ink)
+            },
+            confirmButton = { TextButton(onClick = { Updates.dismiss(); activity.openPage(s.info.pageUrl) }) { Text("Open the page") } },
+            dismissButton = { TextButton(onClick = { Updates.dismiss() }) { Text("Close") } })
+        else -> {}
     }
 }

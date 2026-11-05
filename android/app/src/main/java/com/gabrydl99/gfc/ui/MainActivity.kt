@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.gabrydl99.gfc.BuildConfig
 import com.gabrydl99.gfc.core.Settings
 import com.gabrydl99.gfc.core.Storage
+import com.gabrydl99.gfc.core.Updates
 import com.gabrydl99.gfc.core.Workspace
 import com.gabrydl99.gfc.core.extOf
 import com.gabrydl99.gfc.core.kindOf
@@ -87,11 +88,52 @@ class MainActivity : ComponentActivity() {
             }
         }
         handleIntent(intent)
+        if (savedInstanceState == null) lifecycleScope.launch { Updates.check(BuildConfig.VERSION_NAME) }
     }
 
     override fun onResume() {
         super.onResume()
         allFiles.value = Storage.allFilesAccess()
+        // back from "Allow from this source": install the update that was waiting
+        (Updates.state.value as? Updates.State.NeedsPermission)?.let { st ->
+            if (canInstall()) installUpdate(st.info, st.file)
+        }
+    }
+
+    // ------------------------------------------------------------ updates
+
+    fun startUpdate(info: Updates.Info) = Updates.start(cacheDir, info)
+
+    private fun canInstall(): Boolean = packageManager.canRequestPackageInstalls()
+
+    /** Opens Android's installer on the downloaded APK (asks for the install permission first if needed). */
+    fun installUpdate(info: Updates.Info, file: File) {
+        if (!canInstall()) {
+            Updates.needsPermission(info, file)
+            try {
+                startActivity(Intent(AndroidSettings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
+            } catch (_: Exception) {
+                toast("Allow General File Compressor to install apps in the phone settings, then come back.")
+            }
+            return
+        }
+        try {
+            val uri = FileProvider.getUriForFile(this, "$packageName.files", file)
+            startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/vnd.android.package-archive")
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
+            Updates.installed()
+        } catch (e: Exception) {
+            toast("Couldn't open the installer: ${e.message}")
+            openPage(info.pageUrl)
+        }
+    }
+
+    fun openPage(url: String) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url.ifEmpty { "https://github.com/${Updates.REPO}/releases/latest" })))
+        } catch (_: Exception) {
+            toast("No browser found.")
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -127,6 +169,13 @@ class MainActivity : ComponentActivity() {
             WorkRepo.addPaths(files)
         }
         if (intent.getBooleanExtra("gfc_test_start", false)) compress()
+        intent.getStringExtra("gfc_test_update_json")?.let { src ->
+            val now = intent.getBooleanExtra("gfc_test_update_now", false)
+            lifecycleScope.launch {
+                Updates.check(BuildConfig.VERSION_NAME, src, force = true)
+                if (now) (Updates.state.value as? Updates.State.Available)?.let { startUpdate(it.info) }
+            }
+        }
     }
 
     private fun addUris(uris: List<Uri>, shared: Boolean) {

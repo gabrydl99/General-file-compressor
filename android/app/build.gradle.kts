@@ -4,6 +4,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// One version number for Windows and Android: __version__ in the Python package.
+val appVersion: String = Regex("""__version__\s*=\s*"([^"]+)"""")
+    .find(rootProject.file("../general_file_compressor/__init__.py").readText())!!.groupValues[1]
+val appVersionCode: Int = appVersion.split(".").map { it.filter(Char::isDigit).toIntOrNull() ?: 0 }
+    .let { (it + listOf(0, 0, 0)).take(3) }.let { (a, b, c) -> a * 10000 + b * 100 + c }
+
 android {
     namespace = "com.gabrydl99.gfc"
     compileSdk = 35
@@ -12,8 +18,8 @@ android {
         applicationId = "com.gabrydl99.gfc"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = appVersionCode
+        versionName = appVersion
     }
 
     // The release key is never stored in the repository. On GitHub it comes from the

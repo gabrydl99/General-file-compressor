@@ -1,18 +1,21 @@
-name: Windows app
+name: Windows exe
 
-# Builds "General File Compressor.zip" (the Windows exe) on a GitHub Windows PC,
-# tries it on sample files, and publishes it as a release when the commit
-# message contains [release-windows].
+# Builds the Windows app (a folder with the exe, zipped) on a GitHub Windows PC and
+# tries it on sample files. On a version tag (v1.2.0, …) the zip is added to that
+# release; the release is published once the Android APK is there too.
 on:
   push:
     branches: [main, 'android**', 'windows**']
+    tags: ['v*']
     paths:
       - 'general_file_compressor/**'
       - 'packaging/**'
       - 'main.py'
       - 'requirements.txt'
       - 'build_windows.bat'
+      - 'RELEASE_NOTES.md'
       - '.github/workflows/windows.yml'
+      - '.github/scripts/**'
   workflow_dispatch:
 
 permissions:
@@ -25,25 +28,61 @@ concurrency:
 jobs:
   build:
     runs-on: windows-latest
+    timeout-minutes: 60
     defaults:
       run:
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
-      - name: Install
+          cache-dependency-path: requirements.txt
+
+      - name: Install libraries
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller imageio-ffmpeg
           pip install --no-deps PyMuPDF
-          New-Item -ItemType Directory -Force packaging\ffmpeg | Out-Null
+
+      - name: FFmpeg
+        run: |
           $ff = python -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"
-          Copy-Item $ff packaging\ffmpeg\ffmpeg.exe
-      - name: Build the exe
-        run: pyinstaller --noconfirm --clean packaging\general_file_compressor.spec
+          New-Item -ItemType Directory -Force packaging/ffmpeg | Out-Null
+          Copy-Item $ff packaging/ffmpeg/ffmpeg.exe
+
+      - name: Version number
+        shell: bash
+        run: |
+          VER=$(python -c "import re;print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', open('general_file_compressor/__init__.py').read()).group(1))")
+          echo "App version $VER"
+          if [[ "$GITHUB_REF" == refs/tags/v* && "${GITHUB_REF_NAME#v}" != "$VER" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match __version__ $VER"; exit 1
+          fi
+          # the exe's file properties follow __version__
+          python - "$VER" <<'PY'
+          import re, sys
+          v = sys.argv[1]; n = (v.split(".") + ["0"] * 4)[:4]
+          p = "packaging/version_info.txt"; s = open(p, encoding="utf-8").read()
+          s = re.sub(r"filevers=\([^)]*\)", "filevers=(%s)" % ", ".join(n), s)
+          s = re.sub(r"prodvers=\([^)]*\)", "prodvers=(%s)" % ", ".join(n), s)
+          s = re.sub(r"(StringStruct\('(?:File|Product)Version', ')[^']*('\))", r"\g<1>%s\g<2>" % v, s)
+          open(p, "w", encoding="utf-8").write(s)
+          PY
+
+      - name: Check that the app starts
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -c "from PySide6.QtWidgets import QApplication; app=QApplication([]); from general_file_compressor import theme as T; from general_file_compressor.window import MainWindow; d,t=T.load_fonts(); w=MainWindow(d,t); print('window ok')"
+
+      - name: Check the update check
+        run: python -c "from general_file_compressor.updates import parse_version as p; assert p('v1.2.0') > p('1.1.0') > p('windows-v1.0.0'); print('versions ok')"
+
+      - name: Build the exe folder
+        run: python -m PyInstaller --noconfirm --clean packaging/general_file_compressor.spec
+
       - name: Try it on sample files
         run: |
           New-Item -ItemType Directory -Force test-out, samples | Out-Null
@@ -56,48 +95,56 @@ jobs:
           $cliArgs = @('--cli', '--percent', '30', '--keep-originals', '--out', "$PWD\test-out", '--log', "$PWD\test-out\results.txt") + $files
           $p = Start-Process -FilePath $exe -ArgumentList ($cliArgs | ForEach-Object { '"' + $_ + '"' }) -Wait -PassThru
           Get-Content test-out\results.txt
-          Get-ChildItem -Recurse test-out | Format-Table Name, Length
           if ($p.ExitCode -ne 0) { Write-Error "the exe reported a failed file (exit $($p.ExitCode))" }
           $made = (Get-ChildItem test-out\Compressed).Count
           if ($made -lt 4) { Write-Error "only $made of 4 files were compressed" }
+
       - name: Zip
-        run: Compress-Archive -Path "dist\General File Compressor" -DestinationPath "General File Compressor.zip"
-      # The zip is ~100 MB: it goes to the ci-out-windows branch in parts under GitHub's
-      # 100 MB file limit, so it can be fetched with git and joined again.
+        run: Compress-Archive -Path "dist/General File Compressor" -DestinationPath "General-File-Compressor-Windows.zip" -CompressionLevel Optimal
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: General-File-Compressor-Windows
+          path: General-File-Compressor-Windows.zip
+          retention-days: 30
+
+      # For checking builds from the chat: the ~100 MB zip goes to the
+      # ci-out-windows branch in parts under GitHub's 100 MB file limit.
       - uses: actions/checkout@v4
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         with:
           path: out
       - name: Push the zip to the ci-out-windows branch
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         shell: bash
         working-directory: out
         run: |
           git checkout -q --orphan ci-out-windows
           git rm -rq --cached . && git clean -fdxq
-          split -b 45m "../General File Compressor.zip" "General File Compressor.zip.part_"
+          split -b 45m ../General-File-Compressor-Windows.zip "General File Compressor.zip.part_"
           cp ../test-out/results.txt test-results.txt 2>/dev/null || true
-          sha256sum "../General File Compressor.zip" | cut -d' ' -f1 > sha256.txt
+          sha256sum ../General-File-Compressor-Windows.zip | cut -d' ' -f1 > sha256.txt
           echo "${{ github.sha }}" > sha.txt
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "Windows build of ${{ github.sha }}"
           git push -f origin ci-out-windows
-      - uses: actions/upload-artifact@v4
+
+  release:
+    needs: [build]
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    # one release job at a time per tag, also across the Android workflow
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: windows-zip
-          path: General File Compressor.zip
-      - if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-test
-          path: test-out
-          if-no-files-found: ignore
-      - name: Publish as a GitHub release
-        if: ${{ contains(github.event.head_commit.message, '[release-windows]') }}
+          name: General-File-Compressor-Windows
+          path: dl
+      - name: Add the Windows zip to the release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          $ver = python -c "import general_file_compressor as g; print(g.__version__)"
-          $tag = "windows-v$ver"
-          gh release delete $tag --yes --cleanup-tag 2>$null
-          gh release create $tag "General File Compressor.zip" --target "${{ github.sha }}" `
-            --title "General File Compressor for Windows $ver" `
-            --notes "Download General.File.Compressor.zip, extract it and open General File Compressor.exe. If SmartScreen warns, click More info → Run anyway (the exe isn't signed). Keep the _internal folder next to the exe."
+          GH_REPO: ${{ github.repository }}
+        run: bash .github/scripts/release_upload.sh dl/General-File-Compressor-Windows.zip

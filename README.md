@@ -1,6 +1,21 @@
 # General File Compressor
 
-A Windows app that compresses and converts videos, photos, PDFs, audio and Office files — **completely offline**. Drop files in, pick how small they should get (or which format they should become), press Compress. Every file gets its own progress bar.
+A Windows and Android app that compresses and converts videos, photos, PDFs, audio and Office files — **completely offline**. Drop files in, pick how small they should get (or which format they should become), press Compress. Every file gets its own progress bar.
+
+## Download
+
+Get the latest version from **[Releases](https://github.com/gabrydl99/General-file-compressor/releases/latest)**:
+
+- **Windows**: `General-File-Compressor-Windows.zip`: extract it and open `General File Compressor.exe`.
+- **Android**: `General-File-Compressor-Android.apk`: open it on the phone to install (not on the Play Store). The Android app's code is in [`android/`](android/).
+
+Both apps check for a newer release at start-up.
+
+## Making a release
+
+1. Raise `__version__` in `general_file_compressor/__init__.py` (Android uses the same number) and update `RELEASE_NOTES.md`.
+2. Push to `main` and wait until the **Windows exe** and **Android app** workflows pass.
+3. Push a tag with that number, e.g. `git tag v1.3.0 && git push origin v1.3.0`. GitHub builds both apps, adds them to the release and publishes it when both files are there.
 
 ## Where the files go
 

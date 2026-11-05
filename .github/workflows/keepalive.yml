@@ -1,0 +1,22 @@
+name: Keep the Android signing key
+
+# The APK is signed with a key kept in the Actions cache (made by a build on main).
+# GitHub drops caches that aren't used for 7 days; reading it every few days keeps
+# it, so new APKs keep installing over the old ones.
+on:
+  schedule:
+    - cron: '23 4 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  touch:
+    runs-on: ubuntu-latest
+    steps:
+      - id: key
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: gfc-debug-keystore-v1
+      - run: |
+          if [ "${{ steps.key.outputs.cache-hit }}" = "true" ]; then echo "Signing key is there."
+          else echo "::warning::No signing key in the cache yet: the next build on main makes one."; fi

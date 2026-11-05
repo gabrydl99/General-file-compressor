@@ -1,16 +1,22 @@
 # Android app — status and how to continue
 
-**Status 2026-11-05 ~01:30:** the code is on GitHub (branch `android`). GitHub Actions builds FFmpeg
-(cached), the APK and runs the emulator test (4 scenarios: percent, MB, convert, mixed). All 40 files
-pass. WebM: libvpx-vp9 two-pass fails with "Invalid argument" on the emulator (cause unknown; `run-as`
-diagnostics can't read /sdcard), so the app falls back to one-pass VP9, which works. The APK
-(`apk/General-File-Compressor.apk` on `ci-out`, arm64 + armv7, ~38 MB) was sent to the user in chat;
-it's signed with a debug key kept in the Actions cache `gfc-debug-keystore-v1` (expires if unused
-for 7 days → then a new APK needs uninstalling the old one; a permanent key needs repo secrets).
-The Windows exe is also built and tested by `.github/workflows/windows.yml` (all 4 sample files OK).
-Still to do: test on the user's real phone; merge `android` into `main` when the user is happy.
-Releases: the safety check refused publishing a public release without the user's explicit OK —
-ask before adding `[release]` / `[release-windows]` to a commit message.
+**Status 2026-11-05 ~08:00:** `main` (another chat added the Windows update check, retry button,
+Discord chip and v1.1.0) was merged into `android`; both apps are now version **1.2.0**, read from
+`general_file_compressor/__init__.py` (Android's build.gradle.kts parses it). Android has an update
+check at start-up (`core/Updates.kt` + `UpdateDialog` in MainScreen: GitHub releases/latest → APK
+asset → download → system installer; REQUEST_INSTALL_PACKAGES + INTERNET).
+
+**Release process (agreed with the user, who asked for exe and APK on GitHub releases):**
+push to `main` → both workflows build (Android branch builds also run the emulator test) → push tag
+`vX.Y.Z` → each workflow adds its file to the release via `.github/scripts/release_upload.sh`, which
+keeps it a draft until both `General-File-Compressor-Windows.zip` and
+`General-File-Compressor-Android.apk` are there, then publishes it as latest.
+Signing: debug key in the Actions cache `gfc-debug-keystore-v1`. Tag builds only see caches made on
+`main`, so main must build once before the first tag; `keepalive.yml` reads the cache every 3 days so
+it doesn't expire. The very first main-made key differs from the test APK sent in chat on 2026-11-05
+(made on the `android` branch): that one has to be uninstalled once before installing 1.2.0.
+Stray release `windows-v1.0.0` was created by accident (commit message contained the old marker);
+ask the user before deleting it.
 Commit messages: no "Claude-Session" link (it made pushes to this public repo be refused).
 
 ## Start here
