@@ -1,0 +1,131 @@
+{
+  "summary": "10 done, 37.2 MB saved.",
+  "done": 10,
+  "failed": 0,
+  "skipped": 0,
+  "aborted": false,
+  "items": [
+    {
+      "name": "Holiday video.mp4",
+      "ok": true,
+      "message": "",
+      "original": 25858557,
+      "new": 7591852,
+      "target": 7757567,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/Holiday video_compressed.mp4",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/Holiday video.mp4",
+      "notes": []
+    },
+    {
+      "name": "camera photo.jpg",
+      "ok": true,
+      "message": "",
+      "original": 2085382,
+      "new": 617915,
+      "target": 625614,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/camera photo_compressed.jpg",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/camera photo.jpg",
+      "notes": [
+        "Resized 4000×3000 → 3331×2498"
+      ]
+    },
+    {
+      "name": "diagram.png",
+      "ok": true,
+      "message": "",
+      "original": 11941,
+      "new": 3574,
+      "target": 3582,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/diagram_compressed.png",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/diagram.png",
+      "notes": [
+        "Reduced to 256 colors, resized to 632×474"
+      ]
+    },
+    {
+      "name": "lesson.mkv",
+      "ok": true,
+      "message": "",
+      "original": 495080,
+      "new": 145425,
+      "target": 148524,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/lesson_compressed.mkv",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/lesson.mkv",
+      "notes": [
+        "Resolution 1280×720 → 426×240"
+      ]
+    },
+    {
+      "name": "old clip.avi",
+      "ok": true,
+      "message": "",
+      "original": 10933398,
+      "new": 3170113,
+      "target": 3280019,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/old clip_compressed.mp4",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/old clip.avi",
+      "notes": [
+        "Saved as MP4"
+      ]
+    },
+    {
+      "name": "report.docx",
+      "ok": true,
+      "message": "",
+      "original": 1699617,
+      "new": 507030,
+      "target": 509885,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/report_compressed.docx",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/report.docx",
+      "notes": []
+    },
+    {
+      "name": "scanned document.pdf",
+      "ok": true,
+      "message": "",
+      "original": 3895872,
+      "new": 941107,
+      "target": 1168761,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/scanned document_compressed.pdf",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/scanned document.pdf",
+      "notes": []
+    },
+    {
+      "name": "song.mp3",
+      "ok": true,
+      "message": "",
+      "original": 1921820,
+      "new": 458034,
+      "target": 576546,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/song_compressed.mp3",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/song.mp3",
+      "notes": []
+    },
+    {
+      "name": "sticker.webp",
+      "ok": true,
+      "message": "",
+      "original": 123608,
+      "new": 37046,
+      "target": 37082,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/sticker_compressed.webp",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/sticker.webp",
+      "notes": [
+        "Resized 2400×1600 → 1818×1212"
+      ]
+    },
+    {
+      "name": "voice memo.wav",
+      "ok": true,
+      "message": "",
+      "original": 7056078,
+      "new": 1602916,
+      "target": 2116823,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/voice memo_compressed.mp3",
+      "movedTo": "\/storage\/emulated\/0\/Download\/FileCompressor\/Original\/voice memo.wav",
+      "notes": [
+        "Saved as MP3 (from WAV)"
+      ]
+    }
+  ]
+}

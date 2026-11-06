@@ -1,0 +1,10 @@
+/sdcard/Download/FileCompressor:
+total 8
+drwxrws--- 2 u0_a174 media_rw 4096 2026-11-06 16:30 Compressed
+
+/sdcard/Download/FileCompressor/Compressed:
+total 6892
+-rw-rw---- 1 u0_a174 media_rw 2078715 2026-11-06 16:30 Holiday video_compressed.mp4
+-rw-rw---- 1 u0_a174 media_rw 2050255 2026-11-06 16:30 old clip_compressed.mp4
+-rw-rw---- 1 u0_a174 media_rw 1301870 2026-11-06 16:30 scanned document_compressed.pdf
+-rw-rw---- 1 u0_a174 media_rw 1602916 2026-11-06 16:30 voice memo_compressed.mp3

@@ -1,0 +1,30 @@
+/sdcard/Download/FileCompressor:
+total 16
+drwxrws--- 2 u0_a174 media_rw 4096 2026-11-06 16:30 Compressed
+drwxrws--- 2 u0_a174 media_rw 4096 2026-11-06 16:30 Original
+
+/sdcard/Download/FileCompressor/Compressed:
+total 14776
+-rw-rw---- 1 u0_a174 media_rw 7591852 2026-11-06 16:29 Holiday video_compressed.mp4
+-rw-rw---- 1 u0_a174 media_rw  617915 2026-11-06 16:29 camera photo_compressed.jpg
+-rw-rw---- 1 u0_a174 media_rw    3574 2026-11-06 16:29 diagram_compressed.png
+-rw-rw---- 1 u0_a174 media_rw  145425 2026-11-06 16:29 lesson_compressed.mkv
+-rw-rw---- 1 u0_a174 media_rw 3170113 2026-11-06 16:30 old clip_compressed.mp4
+-rw-rw---- 1 u0_a174 media_rw  507030 2026-11-06 16:30 report_compressed.docx
+-rw-rw---- 1 u0_a174 media_rw  941107 2026-11-06 16:30 scanned document_compressed.pdf
+-rw-rw---- 1 u0_a174 media_rw  458034 2026-11-06 16:30 song_compressed.mp3
+-rw-rw---- 1 u0_a174 media_rw   37046 2026-11-06 16:30 sticker_compressed.webp
+-rw-rw---- 1 u0_a174 media_rw 1602916 2026-11-06 16:30 voice memo_compressed.mp3
+
+/sdcard/Download/FileCompressor/Original:
+total 52876
+-rw-rw---- 1 u0_a174 media_rw 25858557 2026-11-06 16:26 Holiday video.mp4
+-rw-rw---- 1 u0_a174 media_rw  2085382 2026-11-06 16:26 camera photo.jpg
+-rw-rw---- 1 u0_a174 media_rw    11941 2026-11-06 16:26 diagram.png
+-rw-rw---- 1 u0_a174 media_rw   495080 2026-11-06 16:26 lesson.mkv
+-rw-rw---- 1 u0_a174 media_rw 10933398 2026-11-06 16:26 old clip.avi
+-rw-rw---- 1 u0_a174 media_rw  1699617 2026-11-06 16:26 report.docx
+-rw-rw---- 1 u0_a174 media_rw  3895872 2026-11-06 16:26 scanned document.pdf
+-rw-rw---- 1 u0_a174 media_rw  1921820 2026-11-06 16:26 song.mp3
+-rw-rw---- 1 u0_a174 media_rw   123608 2026-11-06 16:26 sticker.webp
+-rw-rw---- 1 u0_a174 media_rw  7056078 2026-11-06 16:26 voice memo.wav

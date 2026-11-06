@@ -1,0 +1,148 @@
+stat: cannot statx 'test-out/results/convert/Compressed/Holiday': No such file or directory
+== test-out/results/convert/Compressed/Holiday ( bytes)
+test-out/results/convert/Compressed/Holiday: No such file or directory
+stat: cannot statx 'video_compressed.mkv': No such file or directory
+== video_compressed.mkv ( bytes)
+video_compressed.mkv: No such file or directory
+stat: cannot statx 'test-out/results/convert/Compressed/camera': No such file or directory
+== test-out/results/convert/Compressed/camera ( bytes)
+test-out/results/convert/Compressed/camera: No such file or directory
+stat: cannot statx 'photo_compressed.webp': No such file or directory
+== photo_compressed.webp ( bytes)
+photo_compressed.webp: No such file or directory
+== test-out/results/convert/Compressed/diagram_compressed.webp (18566 bytes)
+stream|codec_name=webp|width=1600|height=1200
+format|format_name=webp_pipe|duration=N/A
+stat: cannot statx 'test-out/results/convert/Compressed/old': No such file or directory
+== test-out/results/convert/Compressed/old ( bytes)
+test-out/results/convert/Compressed/old: No such file or directory
+stat: cannot statx 'clip_compressed.mkv': No such file or directory
+== clip_compressed.mkv ( bytes)
+clip_compressed.mkv: No such file or directory
+== test-out/results/convert/Compressed/song_compressed.opus (1090733 bytes)
+stream|codec_name=opus
+format|format_name=ogg|duration=60.006500
+stat: cannot statx 'test-out/results/convert/Compressed/voice': No such file or directory
+== test-out/results/convert/Compressed/voice ( bytes)
+test-out/results/convert/Compressed/voice: No such file or directory
+stat: cannot statx 'memo_compressed.opus': No such file or directory
+== memo_compressed.opus ( bytes)
+memo_compressed.opus: No such file or directory
+stat: cannot statx 'test-out/results/mb/Compressed/Holiday': No such file or directory
+== test-out/results/mb/Compressed/Holiday ( bytes)
+test-out/results/mb/Compressed/Holiday: No such file or directory
+stat: cannot statx 'video_compressed.mp4': No such file or directory
+== video_compressed.mp4 ( bytes)
+video_compressed.mp4: No such file or directory
+stat: cannot statx 'test-out/results/mb/Compressed/old': No such file or directory
+== test-out/results/mb/Compressed/old ( bytes)
+test-out/results/mb/Compressed/old: No such file or directory
+stat: cannot statx 'clip_compressed.mp4': No such file or directory
+== clip_compressed.mp4 ( bytes)
+clip_compressed.mp4: No such file or directory
+stat: cannot statx 'test-out/results/mb/Compressed/scanned': No such file or directory
+== test-out/results/mb/Compressed/scanned ( bytes)
+test-out/results/mb/Compressed/scanned: No such file or directory
+stat: cannot statx 'document_compressed.pdf': No such file or directory
+== document_compressed.pdf ( bytes)
+document_compressed.pdf: No such file or directory
+stat: cannot statx 'test-out/results/mb/Compressed/voice': No such file or directory
+== test-out/results/mb/Compressed/voice ( bytes)
+test-out/results/mb/Compressed/voice: No such file or directory
+stat: cannot statx 'memo_compressed.mp3': No such file or directory
+== memo_compressed.mp3 ( bytes)
+memo_compressed.mp3: No such file or directory
+stat: cannot statx 'test-out/results/mixed/Compressed/Holiday': No such file or directory
+== test-out/results/mixed/Compressed/Holiday ( bytes)
+test-out/results/mixed/Compressed/Holiday: No such file or directory
+stat: cannot statx 'video_compressed.webm': No such file or directory
+== video_compressed.webm ( bytes)
+video_compressed.webm: No such file or directory
+stat: cannot statx 'test-out/results/mixed/Compressed/camera': No such file or directory
+== test-out/results/mixed/Compressed/camera ( bytes)
+test-out/results/mixed/Compressed/camera: No such file or directory
+stat: cannot statx 'photo_compressed.png': No such file or directory
+== photo_compressed.png ( bytes)
+photo_compressed.png: No such file or directory
+== test-out/results/mixed/Compressed/diagram_compressed.png (2826 bytes)
+stream|codec_name=png|width=466|height=349
+format|format_name=png_pipe|duration=N/A
+== test-out/results/mixed/Compressed/lesson_compressed.webm (136123 bytes)
+stream|codec_name=vp9|width=426|height=240
+stream|codec_name=opus
+format|format_name=matroska,webm|duration=12.040000
+stat: cannot statx 'test-out/results/mixed/Compressed/old': No such file or directory
+== test-out/results/mixed/Compressed/old ( bytes)
+test-out/results/mixed/Compressed/old: No such file or directory
+stat: cannot statx 'clip_compressed.webm': No such file or directory
+== clip_compressed.webm ( bytes)
+clip_compressed.webm: No such file or directory
+== test-out/results/mixed/Compressed/report_compressed.docx (357988 bytes)
+[mjpeg @ 0x5563a9220640] No JPEG data found in image
+stream|codec_name=mjpeg|width=0|height=0
+format|format_name=mjpeg|duration=N/A
+stat: cannot statx 'test-out/results/mixed/Compressed/scanned': No such file or directory
+== test-out/results/mixed/Compressed/scanned ( bytes)
+test-out/results/mixed/Compressed/scanned: No such file or directory
+stat: cannot statx 'document_compressed.pdf': No such file or directory
+== document_compressed.pdf ( bytes)
+document_compressed.pdf: No such file or directory
+== test-out/results/mixed/Compressed/song_compressed.ogg (515572 bytes)
+stream|codec_name=opus
+format|format_name=ogg|duration=60.006500
+== test-out/results/mixed/Compressed/sticker_compressed.png (27412 bytes)
+stream|codec_name=png|width=546|height=364
+format|format_name=png_pipe|duration=N/A
+stat: cannot statx 'test-out/results/mixed/Compressed/voice': No such file or directory
+== test-out/results/mixed/Compressed/voice ( bytes)
+test-out/results/mixed/Compressed/voice: No such file or directory
+stat: cannot statx 'memo_compressed.ogg': No such file or directory
+== memo_compressed.ogg ( bytes)
+memo_compressed.ogg: No such file or directory
+stat: cannot statx 'test-out/results/percent/Compressed/Holiday': No such file or directory
+== test-out/results/percent/Compressed/Holiday ( bytes)
+test-out/results/percent/Compressed/Holiday: No such file or directory
+stat: cannot statx 'video_compressed.mp4': No such file or directory
+== video_compressed.mp4 ( bytes)
+video_compressed.mp4: No such file or directory
+stat: cannot statx 'test-out/results/percent/Compressed/camera': No such file or directory
+== test-out/results/percent/Compressed/camera ( bytes)
+test-out/results/percent/Compressed/camera: No such file or directory
+stat: cannot statx 'photo_compressed.jpg': No such file or directory
+== photo_compressed.jpg ( bytes)
+photo_compressed.jpg: No such file or directory
+== test-out/results/percent/Compressed/diagram_compressed.png (3574 bytes)
+stream|codec_name=png|width=632|height=474
+format|format_name=png_pipe|duration=N/A
+== test-out/results/percent/Compressed/lesson_compressed.mkv (145425 bytes)
+stream|codec_name=h264|width=426|height=240
+stream|codec_name=aac
+format|format_name=matroska,webm|duration=12.051000
+stat: cannot statx 'test-out/results/percent/Compressed/old': No such file or directory
+== test-out/results/percent/Compressed/old ( bytes)
+test-out/results/percent/Compressed/old: No such file or directory
+stat: cannot statx 'clip_compressed.mp4': No such file or directory
+== clip_compressed.mp4 ( bytes)
+clip_compressed.mp4: No such file or directory
+== test-out/results/percent/Compressed/report_compressed.docx (507030 bytes)
+[mjpeg @ 0x5596a7e0d640] No JPEG data found in image
+stream|codec_name=mjpeg|width=0|height=0
+format|format_name=mjpeg|duration=N/A
+stat: cannot statx 'test-out/results/percent/Compressed/scanned': No such file or directory
+== test-out/results/percent/Compressed/scanned ( bytes)
+test-out/results/percent/Compressed/scanned: No such file or directory
+stat: cannot statx 'document_compressed.pdf': No such file or directory
+== document_compressed.pdf ( bytes)
+document_compressed.pdf: No such file or directory
+== test-out/results/percent/Compressed/song_compressed.mp3 (458034 bytes)
+stream|codec_name=mp3
+format|format_name=mp3|duration=60.029388
+== test-out/results/percent/Compressed/sticker_compressed.webp (37046 bytes)
+stream|codec_name=webp|width=1818|height=1212
+format|format_name=webp_pipe|duration=N/A
+stat: cannot statx 'test-out/results/percent/Compressed/voice': No such file or directory
+== test-out/results/percent/Compressed/voice ( bytes)
+test-out/results/percent/Compressed/voice: No such file or directory
+stat: cannot statx 'memo_compressed.mp3': No such file or directory
+== memo_compressed.mp3 ( bytes)
+memo_compressed.mp3: No such file or directory

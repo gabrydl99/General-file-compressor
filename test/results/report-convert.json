@@ -1,0 +1,127 @@
+{
+  "summary": "6 done, 7.8 MB saved. 4 skipped.",
+  "done": 6,
+  "failed": 0,
+  "skipped": 4,
+  "aborted": false,
+  "items": [
+    {
+      "name": "Holiday video.mp4",
+      "ok": true,
+      "message": "",
+      "original": 25858557,
+      "new": 25848119,
+      "target": 25858557,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/Holiday video_compressed.mkv",
+      "movedTo": null,
+      "notes": [
+        "Converted without re-encoding (no quality lost)"
+      ]
+    },
+    {
+      "name": "camera photo.jpg",
+      "ok": true,
+      "message": "",
+      "original": 2085382,
+      "new": 1020698,
+      "target": 2085382,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/camera photo_compressed.webp",
+      "movedTo": null,
+      "notes": [
+        "Saved as WEBP (from JPG)"
+      ]
+    },
+    {
+      "name": "diagram.png",
+      "ok": true,
+      "message": "",
+      "original": 11941,
+      "new": 18460,
+      "target": 11941,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/diagram_compressed.webp",
+      "movedTo": null,
+      "notes": [
+        "Saved as WEBP (from PNG)"
+      ]
+    },
+    {
+      "name": "lesson.mkv",
+      "ok": false,
+      "message": "It's already MKV. Pick another format, or a size, to change it.",
+      "original": 495080,
+      "new": 0,
+      "target": 0,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "old clip.avi",
+      "ok": true,
+      "message": "",
+      "original": 10933398,
+      "new": 10915902,
+      "target": 10933398,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/old clip_compressed.mkv",
+      "movedTo": null,
+      "notes": [
+        "Converted without re-encoding (no quality lost)"
+      ]
+    },
+    {
+      "name": "report.docx",
+      "ok": false,
+      "message": "PDF and Office files can only be compressed, not converted.",
+      "original": 1699617,
+      "new": 0,
+      "target": 0,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "scanned document.pdf",
+      "ok": false,
+      "message": "PDF and Office files can only be compressed, not converted.",
+      "original": 3895872,
+      "new": 0,
+      "target": 0,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "song.mp3",
+      "ok": true,
+      "message": "",
+      "original": 1921820,
+      "new": 1090733,
+      "target": 1921820,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/song_compressed.opus",
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "sticker.webp",
+      "ok": false,
+      "message": "It's already WEBP.",
+      "original": 123608,
+      "new": 0,
+      "target": 0,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "voice memo.wav",
+      "ok": true,
+      "message": "",
+      "original": 7056078,
+      "new": 825584,
+      "target": 7056078,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/voice memo_compressed.opus",
+      "movedTo": null,
+      "notes": []
+    }
+  ]
+}

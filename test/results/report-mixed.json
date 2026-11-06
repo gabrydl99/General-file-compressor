@@ -1,0 +1,140 @@
+{
+  "summary": "10 done, 41.2 MB saved.",
+  "done": 10,
+  "failed": 0,
+  "skipped": 0,
+  "aborted": false,
+  "items": [
+    {
+      "name": "Holiday video.mp4",
+      "ok": true,
+      "message": "",
+      "original": 25858557,
+      "new": 5587260,
+      "target": 6464639,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/Holiday video_compressed.webm",
+      "movedTo": null,
+      "notes": [
+        "Resolution 1920×1080 → 1280×720",
+        "Saved as WEBM"
+      ]
+    },
+    {
+      "name": "camera photo.jpg",
+      "ok": true,
+      "message": "",
+      "original": 2085382,
+      "new": 496931,
+      "target": 521345,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/camera photo_compressed.png",
+      "movedTo": null,
+      "notes": [
+        "Saved as PNG (from JPG)",
+        "Reduced to 256 colors, resized to 1432×1074"
+      ]
+    },
+    {
+      "name": "diagram.png",
+      "ok": true,
+      "message": "",
+      "original": 11941,
+      "new": 2826,
+      "target": 2985,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/diagram_compressed.png",
+      "movedTo": null,
+      "notes": [
+        "Reduced to 256 colors, resized to 466×349"
+      ]
+    },
+    {
+      "name": "lesson.mkv",
+      "ok": true,
+      "message": "",
+      "original": 495080,
+      "new": 136123,
+      "target": 123770,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/lesson_compressed.webm",
+      "movedTo": null,
+      "notes": [
+        "Resolution 1280×720 → 426×240",
+        "Saved as WEBM",
+        "Couldn't fully reach the target without ruining quality."
+      ]
+    },
+    {
+      "name": "old clip.avi",
+      "ok": true,
+      "message": "",
+      "original": 10933398,
+      "new": 2299092,
+      "target": 2733349,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/old clip_compressed.webm",
+      "movedTo": null,
+      "notes": [
+        "Saved as WEBM"
+      ]
+    },
+    {
+      "name": "report.docx",
+      "ok": true,
+      "message": "",
+      "original": 1699617,
+      "new": 357988,
+      "target": 424904,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/report_compressed.docx",
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "scanned document.pdf",
+      "ok": true,
+      "message": "",
+      "original": 3895872,
+      "new": 938196,
+      "target": 973968,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/scanned document_compressed.pdf",
+      "movedTo": null,
+      "notes": [
+        "Pages rebuilt as pictures (text can't be selected anymore)"
+      ]
+    },
+    {
+      "name": "song.mp3",
+      "ok": true,
+      "message": "",
+      "original": 1921820,
+      "new": 515572,
+      "target": 480455,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/song_compressed.ogg",
+      "movedTo": null,
+      "notes": [
+        "Couldn't fully reach the target without ruining quality."
+      ]
+    },
+    {
+      "name": "sticker.webp",
+      "ok": true,
+      "message": "",
+      "original": 123608,
+      "new": 27412,
+      "target": 30902,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/sticker_compressed.png",
+      "movedTo": null,
+      "notes": [
+        "Saved as PNG (from WEBP)",
+        "Reduced to 256 colors, resized to 546×364"
+      ]
+    },
+    {
+      "name": "voice memo.wav",
+      "ok": true,
+      "message": "",
+      "original": 7056078,
+      "new": 502356,
+      "target": 1764019,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/voice memo_compressed.ogg",
+      "movedTo": null,
+      "notes": []
+    }
+  ]
+}

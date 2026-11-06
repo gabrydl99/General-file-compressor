@@ -1,0 +1,4 @@
+abi=arm64-v8a
+ffmpeg=n7.1.1
+vpx=yes
+size=25393368

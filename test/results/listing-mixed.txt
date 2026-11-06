@@ -1,0 +1,16 @@
+/sdcard/Download/FileCompressor:
+total 8
+drwxrws--- 2 u0_a174 media_rw 4096 2026-11-06 16:31 Compressed
+
+/sdcard/Download/FileCompressor/Compressed:
+total 10672
+-rw-rw---- 1 u0_a174 media_rw 5587260 2026-11-06 16:31 Holiday video_compressed.webm
+-rw-rw---- 1 u0_a174 media_rw  496931 2026-11-06 16:31 camera photo_compressed.png
+-rw-rw---- 1 u0_a174 media_rw    2826 2026-11-06 16:31 diagram_compressed.png
+-rw-rw---- 1 u0_a174 media_rw  136123 2026-11-06 16:31 lesson_compressed.webm
+-rw-rw---- 1 u0_a174 media_rw 2299092 2026-11-06 16:31 old clip_compressed.webm
+-rw-rw---- 1 u0_a174 media_rw  357988 2026-11-06 16:31 report_compressed.docx
+-rw-rw---- 1 u0_a174 media_rw  938196 2026-11-06 16:31 scanned document_compressed.pdf
+-rw-rw---- 1 u0_a174 media_rw  515572 2026-11-06 16:31 song_compressed.ogg
+-rw-rw---- 1 u0_a174 media_rw   27412 2026-11-06 16:31 sticker_compressed.png
+-rw-rw---- 1 u0_a174 media_rw  502356 2026-11-06 16:31 voice memo_compressed.ogg

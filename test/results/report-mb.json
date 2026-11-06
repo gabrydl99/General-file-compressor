@@ -1,0 +1,125 @@
+{
+  "summary": "4 done, 38.8 MB saved. 6 skipped.",
+  "done": 4,
+  "failed": 0,
+  "skipped": 6,
+  "aborted": false,
+  "items": [
+    {
+      "name": "Holiday video.mp4",
+      "ok": true,
+      "message": "",
+      "original": 25858557,
+      "new": 2078715,
+      "target": 2097152,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/Holiday video_compressed.mp4",
+      "movedTo": null,
+      "notes": [
+        "Resolution 1920×1080 → 1024×576"
+      ]
+    },
+    {
+      "name": "camera photo.jpg",
+      "ok": false,
+      "message": "Already smaller than the size you picked.",
+      "original": 2085382,
+      "new": 0,
+      "target": 2097152,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "diagram.png",
+      "ok": false,
+      "message": "Already smaller than the size you picked.",
+      "original": 11941,
+      "new": 0,
+      "target": 2097152,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "lesson.mkv",
+      "ok": false,
+      "message": "Already smaller than the size you picked.",
+      "original": 495080,
+      "new": 0,
+      "target": 2097152,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "old clip.avi",
+      "ok": true,
+      "message": "",
+      "original": 10933398,
+      "new": 2050255,
+      "target": 2097152,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/old clip_compressed.mp4",
+      "movedTo": null,
+      "notes": [
+        "Saved as MP4"
+      ]
+    },
+    {
+      "name": "report.docx",
+      "ok": false,
+      "message": "Already smaller than the size you picked.",
+      "original": 1699617,
+      "new": 0,
+      "target": 2097152,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "scanned document.pdf",
+      "ok": true,
+      "message": "",
+      "original": 3895872,
+      "new": 1301870,
+      "target": 2097152,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/scanned document_compressed.pdf",
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "song.mp3",
+      "ok": false,
+      "message": "Already smaller than the size you picked.",
+      "original": 1921820,
+      "new": 0,
+      "target": 2097152,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "sticker.webp",
+      "ok": false,
+      "message": "Already smaller than the size you picked.",
+      "original": 123608,
+      "new": 0,
+      "target": 2097152,
+      "output": null,
+      "movedTo": null,
+      "notes": []
+    },
+    {
+      "name": "voice memo.wav",
+      "ok": true,
+      "message": "",
+      "original": 7056078,
+      "new": 1602916,
+      "target": 2097152,
+      "output": "\/storage\/emulated\/0\/Download\/FileCompressor\/Compressed\/voice memo_compressed.mp3",
+      "movedTo": null,
+      "notes": [
+        "Saved as MP3 (from WAV)"
+      ]
+    }
+  ]
+}
