@@ -1,0 +1,4 @@
+OK   D:\a\General-file-compressor\General-file-compressor\samples\photo.jpg: 1.7 MB -> 526 KB (target 530 KB) -> D:\a\General-file-compressor\General-file-compressor\test-out\Compressed\photo_compressed.jpg  Resized 3000×2000 → 2652×1768
+OK   D:\a\General-file-compressor\General-file-compressor\samples\scan.pdf: 1.2 MB -> 161 KB (target 361 KB) -> D:\a\General-file-compressor\General-file-compressor\test-out\Compressed\scan_compressed.pdf  
+OK   D:\a\General-file-compressor\General-file-compressor\samples\video.mp4: 6.5 MB -> 1.9 MB (target 1.9 MB) -> D:\a\General-file-compressor\General-file-compressor\test-out\Compressed\video_compressed.mp4  
+OK   D:\a\General-file-compressor\General-file-compressor\samples\voice.wav: 1.7 MB -> 192 KB (target 517 KB) -> D:\a\General-file-compressor\General-file-compressor\test-out\Compressed\voice_compressed.mp3  Saved as MP3 (from WAV)
