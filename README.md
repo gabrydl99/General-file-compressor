@@ -1,4 +1,4 @@
-# General File Compressor
+# FileCompressor
 
 A Windows and Android app that compresses and converts videos, photos, PDFs, audio and Office files — **completely offline**. Drop files in, pick how small they should get (or which format they should become), press Compress. Every file gets its own progress bar.
 
@@ -6,8 +6,8 @@ A Windows and Android app that compresses and converts videos, photos, PDFs, aud
 
 Get the latest version from **[Releases](https://github.com/gabrydl99/General-file-compressor/releases/latest)**:
 
-- **Windows**: `General-File-Compressor-Windows.zip`: extract it and open `General File Compressor.exe`.
-- **Android**: `General-File-Compressor-Android.apk`: open it on the phone to install (not on the Play Store). The Android app's code is in [`android/`](android/).
+- **Windows**: `FileCompressor-Windows.zip`: extract it and open `FileCompressor.exe`.
+- **Android**: `FileCompressor-Android.apk`: open it on the phone to install (not on the Play Store). The Android app's code is in [`android/`](android/).
 
 Both apps check for a newer release at start-up.
 
@@ -18,7 +18,7 @@ Both apps check for a newer release at start-up.
 
 ## Where the files go
 
-By default everything is saved next to the program (the folder that contains `General File Compressor.exe`). Use **Change folder** to pick another place; **Use default** goes back to the program folder.
+By default everything is saved next to the program (the folder that contains `FileCompressor.exe`). Use **Change folder** to pick another place; **Use default** goes back to the program folder.
 
 ```
 <output folder>/
@@ -52,15 +52,15 @@ A failed file turns red. Click **Why did it fail?** to see what happened, the li
 
 ## Download and run
 
-1. Download `General File Compressor.zip` and extract it.
-2. Open the extracted folder and double-click **General File Compressor.exe**.
+1. Download `FileCompressor.zip` and extract it.
+2. Open the extracted folder and double-click **FileCompressor.exe**.
 3. The exe isn't signed, so Windows SmartScreen may warn the first time: click **More info → Run anyway**.
 
 Keep the `_internal` folder next to the exe — the app needs it.
 
 ## Build it yourself (Windows)
 
-Install [Python 3.12](https://www.python.org/downloads/) (64-bit), then double-click `build_windows.bat`. The result is in `dist\General File Compressor\`.
+Install [Python 3.12](https://www.python.org/downloads/) (64-bit), then double-click `build_windows.bat`. The result is in `dist\FileCompressor\`.
 
 To run from source instead:
 
@@ -77,9 +77,9 @@ FFmpeg is looked up in `packaging\ffmpeg\ffmpeg.exe` or on the PATH (`build_wind
 Command-line mode, useful for testing:
 
 ```bat
-"General File Compressor.exe" --cli --percent 30 video.mp4 photo.jpg
-"General File Compressor.exe" --cli --mb 10 --resolution 720 lesson.mov
-"General File Compressor.exe" --cli --convert --video-format mp4 --out D:\Converted clip.mkv
+"FileCompressor.exe" --cli --percent 30 video.mp4 photo.jpg
+"FileCompressor.exe" --cli --mb 10 --resolution 720 lesson.mov
+"FileCompressor.exe" --cli --convert --video-format mp4 --out D:\Converted clip.mkv
 ```
 
 ## Project layout

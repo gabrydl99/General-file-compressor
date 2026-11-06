@@ -1,5 +1,5 @@
 @echo off
-rem Builds "dist\General File Compressor\General File Compressor.exe" on Windows.
+rem Builds "dist\FileCompressor\FileCompressor.exe" on Windows.
 rem Needs Python 3.12 (64-bit) from python.org. Run it by double-clicking.
 setlocal
 cd /d "%~dp0"
@@ -24,7 +24,7 @@ copy /y "%FFMPEG%" packaging\ffmpeg\ffmpeg.exe >nul || goto :fail
 
 pyinstaller --noconfirm --clean packaging\general_file_compressor.spec || goto :fail
 echo.
-echo Done: dist\General File Compressor\General File Compressor.exe
+echo Done: dist\FileCompressor\FileCompressor.exe
 pause
 exit /b 0
 

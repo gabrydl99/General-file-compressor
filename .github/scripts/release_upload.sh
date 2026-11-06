@@ -10,7 +10,7 @@ set -euo pipefail
 FILE=$1
 VER=$(grep -oP '__version__\s*=\s*"\K[^"]+' general_file_compressor/__init__.py)
 TAG="v$VER"
-NEEDED=("General-File-Compressor-Windows.zip" "General-File-Compressor-Android.apk")
+NEEDED=("FileCompressor-Windows.zip" "FileCompressor-Android.apk")
 
 state=$(gh release view "$TAG" --json isDraft --jq .isDraft 2>/dev/null || echo missing)
 case "$state" in
@@ -19,7 +19,7 @@ case "$state" in
     exit 0 ;;
   missing)
     gh release create "$TAG" --draft --target "$GITHUB_SHA" \
-      --title "General File Compressor $VER" --notes-file RELEASE_NOTES.md ;;
+      --title "FileCompressor $VER" --notes-file RELEASE_NOTES.md ;;
   *)
     gh release edit "$TAG" --target "$GITHUB_SHA" --notes-file RELEASE_NOTES.md >/dev/null ;;
 esac

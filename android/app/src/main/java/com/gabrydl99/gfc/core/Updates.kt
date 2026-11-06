@@ -60,7 +60,7 @@ object Updates {
             c.connectTimeout = 8000
             c.readTimeout = 8000
             c.setRequestProperty("Accept", "application/vnd.github+json")
-            c.setRequestProperty("User-Agent", "GeneralFileCompressor-Android")
+            c.setRequestProperty("User-Agent", "FileCompressor-Android")
             try {
                 if (c.responseCode != 200) return null
                 c.inputStream.bufferedReader().use { it.readText() }
@@ -109,12 +109,12 @@ object Updates {
         _state.value = State.Downloading(info, 0f)
         download = scope.launch {
             val dir = File(cacheDir, "update").apply { deleteRecursively(); mkdirs() }
-            val out = File(dir, "General-File-Compressor-${info.version}.apk")
+            val out = File(dir, "FileCompressor-${info.version}.apk")
             try {
                 val c = URL(info.apkUrl).openConnection()
                 c.connectTimeout = 15000
                 c.readTimeout = 30000
-                c.setRequestProperty("User-Agent", "GeneralFileCompressor-Android")
+                c.setRequestProperty("User-Agent", "FileCompressor-Android")
                 val total = c.contentLengthLong.takeIf { it > 0 } ?: info.size
                 c.getInputStream().use { ins ->
                     out.outputStream().use { os ->

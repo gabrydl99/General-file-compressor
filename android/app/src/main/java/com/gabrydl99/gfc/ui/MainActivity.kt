@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
             try {
                 startActivity(Intent(AndroidSettings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
             } catch (_: Exception) {
-                toast("Allow General File Compressor to install apps in the phone settings, then come back.")
+                toast("Allow FileCompressor to install apps in the phone settings, then come back.")
             }
             return
         }

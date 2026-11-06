@@ -25,10 +25,10 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz, a.scripts, [],
     exclude_binaries=True,
-    name="General File Compressor",
+    name="FileCompressor",
     icon=os.path.join(SPECPATH, "icon.ico"),
     version=os.path.join(SPECPATH, "version_info.txt"),
     console=False,
     upx=False,
 )
-coll = COLLECT(exe, a.binaries, a.datas, name="General File Compressor", upx=False)
+coll = COLLECT(exe, a.binaries, a.datas, name="FileCompressor", upx=False)

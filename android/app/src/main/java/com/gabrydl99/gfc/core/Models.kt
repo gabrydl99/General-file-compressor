@@ -45,7 +45,7 @@ data class Settings(
     val imageFormat: String = "keep",  // keep | jpg | png | webp
     val audioFormat: String = "keep",  // keep | mp3 | m4a | ogg | opus
     val pdfAsPictures: Boolean = false,
-    val outputDir: String? = null,     // null = Download/General File Compressor
+    val outputDir: String? = null,     // null = Download/FileCompressor
     val moveOriginals: Boolean = true,
     val preset: String? = null,
 ) {
@@ -98,6 +98,7 @@ enum class Preset(val label: String, val description: String) {
     WHATSAPP("WhatsApp", "About 15 MB per file, MP4 videos and JPG photos: fits WhatsApp's 16 MB limit."),
     TELEGRAM("Telegram", "MP4 at up to 1080p, about 40% of the original size."),
     INSTAGRAM("Instagram", "1080p MP4 at 30 fps and JPG photos, about half the size."),
+    DISCORD("Discord", "About 19 MB per file, MP4 videos and JPG photos: fits Discord's 20 MB free upload limit."),
     EMAIL("Email", "About 18 MB per file, so it fits a 25 MB email attachment.");
 
     fun apply(s: Settings): Settings = when (this) {
@@ -107,6 +108,8 @@ enum class Preset(val label: String, val description: String) {
             resolution = "1080", fps = "auto", preset = name)
         INSTAGRAM -> s.copy(mode = Mode.PERCENT, percent = 50, videoFormat = "mp4", imageFormat = "jpg",
             resolution = "1080", fps = "30", preset = name)
+        DISCORD -> s.copy(mode = Mode.MB, targetMb = 19.0, videoFormat = "mp4", imageFormat = "jpg",
+            resolution = "auto", fps = "auto", preset = name)
         EMAIL -> s.copy(mode = Mode.MB, targetMb = 18.0, videoFormat = "mp4", imageFormat = "jpg",
             resolution = "auto", fps = "auto", preset = name)
     }

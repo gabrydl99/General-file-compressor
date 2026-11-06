@@ -10,7 +10,7 @@ asset → download → system installer; REQUEST_INSTALL_PACKAGES + INTERNET).
 this session can't push tags or edit releases (proxy), so GitHub does it: on a push to `main`,
 each workflow (Windows after its build, Android after app + emulator test) runs
 `.github/scripts/release_upload.sh`, which adds its file to release `v<__version__>`: draft until
-both `General-File-Compressor-Windows.zip` and `General-File-Compressor-Android.apk` are there, then
+both `FileCompressor-Windows.zip` and `FileCompressor-Android.apk` are there, then
 published as latest (GitHub creates the tag). Already published → nothing happens; raise
 `__version__` for a new release.
 Signing: debug key in the Actions cache `gfc-debug-keystore-v1`. Caches made on `main` are readable by every
@@ -65,7 +65,7 @@ Commit messages: no "Claude-Session" link (it made pushes to this public repo be
   MOV, WebM (if libvpx builds), MP3, AVI/WMV/FLV/WMA input all work.
 - Phone-adapted UI (small/large screens, light/dark, big touch targets) and presets
   **WhatsApp / Telegram / Instagram / Email**.
-- Default output: `Download/General File Compressor/Compressed` (`name_compressed.ext`)
+- Default output: `Download/FileCompressor/Compressed` (`name_compressed.ext`)
   and `.../Original` (originals moved there after success; switch to turn off). Custom
   folder allowed. APK only, not for the Play Store → `MANAGE_EXTERNAL_STORAGE` is fine.
 - English UI like the Windows app. Share → General File Compressor + "Add files"/"Add folder".

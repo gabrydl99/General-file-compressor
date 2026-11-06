@@ -35,7 +35,7 @@ class Workspace(context: Context, val settings: Settings) {
     fun tempFile(prefix: String, ext: String): File = File.createTempFile(prefix, ".$ext", temp)
 
     companion object {
-        const val FOLDER_NAME = "General File Compressor"
+        const val FOLDER_NAME = "FileCompressor"
 
         fun defaultRoot(): File = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), FOLDER_NAME)

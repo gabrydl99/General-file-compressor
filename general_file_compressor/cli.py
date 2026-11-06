@@ -1,4 +1,4 @@
-"""Command-line mode, handy for testing:  "General File Compressor.exe" --cli --percent 30 file1 file2"""
+"""Command-line mode, handy for testing:  "FileCompressor.exe" --cli --percent 30 file1 file2"""
 from __future__ import annotations
 
 import argparse
@@ -10,7 +10,7 @@ from .engine import compress
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(prog="General File Compressor --cli")
+    ap = argparse.ArgumentParser(prog="FileCompressor --cli")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--percent", type=int, help="final size as %% of the original")
     g.add_argument("--mb", type=float, help="final size per file in MB")

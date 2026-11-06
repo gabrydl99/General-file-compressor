@@ -8,7 +8,7 @@ APK=$1; SAMPLES=$2; OUT=$3
 PKG=com.gabrydl99.gfc
 ACT=$PKG/.ui.MainActivity
 IN=/sdcard/Download/gfc-in
-RES="/sdcard/Download/General File Compressor"
+RES="/sdcard/Download/FileCompressor"
 mkdir -p "$OUT/shots" "$OUT/results"
 shot() { adb exec-out screencap -p > "$OUT/shots/$1.png"; }
 scroll() {  # swipe up by about two thirds of the screen
@@ -67,7 +67,7 @@ adb push "$APK" /sdcard/Download/gfc-update.apk >/dev/null
 cat > "$OUT/fake-release.json" <<JSON
 {"tag_name": "v99.0.0", "html_url": "https://github.com/gabrydl99/General-file-compressor/releases",
  "body": "**Test release** used by the emulator test.",
- "assets": [{"name": "General-File-Compressor-Android.apk", "size": $(stat -c %s "$APK"),
+ "assets": [{"name": "FileCompressor-Android.apk", "size": $(stat -c %s "$APK"),
              "browser_download_url": "file:///sdcard/Download/gfc-update.apk"}]}
 JSON
 adb push "$OUT/fake-release.json" /sdcard/Download/gfc-fake-release.json >/dev/null

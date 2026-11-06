@@ -1,4 +1,4 @@
-"""General File Compressor entry point.
+"""FileCompressor entry point.
 
     python main.py                         -> opens the app
     python main.py --cli --percent 30 a.mp4 -> compresses without the window (testing)

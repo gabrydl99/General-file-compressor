@@ -200,7 +200,7 @@ private fun Header() {
         Logo(44)
         Spacer(Modifier.width(12.dp))
         Column {
-            Text("General File Compressor", style = MaterialTheme.typography.headlineSmall, color = p.ink)
+            Text("FileCompressor", style = MaterialTheme.typography.headlineSmall, color = p.ink)
             Text("Videos, photos, PDFs, audio and Office files — offline",
                 style = MaterialTheme.typography.bodySmall, color = p.muted)
         }
@@ -352,7 +352,7 @@ private fun FilesBlock(
                     }
                     Spacer(Modifier.height(10.dp))
                     Text("Tap to add files", style = MaterialTheme.typography.titleSmall, color = p.ink)
-                    Text("Or use Share → General File Compressor from the Gallery, WhatsApp or Files",
+                    Text("Or use Share → FileCompressor from the Gallery, WhatsApp or Files",
                         style = MaterialTheme.typography.bodySmall, color = p.muted)
                 }
             }
@@ -702,7 +702,7 @@ private fun UpdateDialog(activity: MainActivity) {
             title = { Text("Update available", style = MaterialTheme.typography.titleMedium) },
             text = {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
-                    Text("General File Compressor ${s.info.version} is ready to install. You have ${BuildConfig.VERSION_NAME}.",
+                    Text("FileCompressor ${s.info.version} is ready to install. You have ${BuildConfig.VERSION_NAME}.",
                         style = MaterialTheme.typography.bodyMedium, color = p.ink)
                     if (s.info.size > 0) Caption("Download: ${humanSize(s.info.size)}")
                     if (s.info.notes.isNotBlank()) {
@@ -730,7 +730,7 @@ private fun UpdateDialog(activity: MainActivity) {
             onDismissRequest = { Updates.dismiss() },
             title = { Text("One more step", style = MaterialTheme.typography.titleMedium) },
             text = {
-                Text("Allow General File Compressor to install the update: turn on \"Allow from this source\", " +
+                Text("Allow FileCompressor to install the update: turn on \"Allow from this source\", " +
                     "then come back here.", style = MaterialTheme.typography.bodyMedium, color = p.ink)
             },
             confirmButton = { TextButton(onClick = { activity.installUpdate(s.info, s.file) }) { Text("Continue") } },

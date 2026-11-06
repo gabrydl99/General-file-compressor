@@ -44,7 +44,7 @@ object Diagnoses {
         listOf("ffmpeg is missing") to Diagnosis(
             "The video engine is missing",
             listOf("This build of the app doesn't contain FFmpeg for your phone's processor."),
-            listOf("Install the latest APK of General File Compressor.")),
+            listOf("Install the latest APK of FileCompressor.")),
         listOf("ffmpeg could not process", "no readable video or audio", "couldn't read the length") to Diagnosis(
             "The video/audio engine couldn't read or write this file",
             listOf("The file may be damaged or incomplete (for example an interrupted download or copy).",
@@ -67,7 +67,7 @@ object Diagnoses {
             listOf("The app may not have access to all files.",
                 "The output folder may be on an SD card or in a protected place.",
                 "A file shared from another app may only be readable for a short time."),
-            listOf("Allow 'All files access' for General File Compressor in the phone settings.",
+            listOf("Allow 'All files access' for FileCompressor in the phone settings.",
                 "Choose another output folder with 'Change folder', or use the default one.",
                 "Add the file again with 'Add files' instead of sharing it.")),
         listOf("storage is full", "no space") to Diagnosis(

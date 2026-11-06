@@ -86,7 +86,7 @@ jobs:
           & $ff -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=1280x720:rate=30 -f lavfi -i sine=frequency=440 -t 10 -c:v libx264 -crf 16 -pix_fmt yuv420p -c:a aac -shortest samples\video.mp4
           & $ff -hide_banner -loglevel error -y -f lavfi -i sine=frequency=300 -t 20 samples\voice.wav
           python -c "from PIL import Image, ImageFilter as F; mk=lambda w,h: Image.effect_noise((w//6,h//6),70).convert('RGB').resize((w,h)).filter(F.GaussianBlur(2)); mk(3000,2000).save('samples/photo.jpg', quality=95); mk(1700,2400).save('samples/scan.pdf', resolution=200, quality=95)"
-          $exe = "dist\General File Compressor\General File Compressor.exe"
+          $exe = "dist\FileCompressor\FileCompressor.exe"
           $files = (Get-ChildItem samples).FullName
           $cliArgs = @('--cli', '--percent', '30', '--keep-originals', '--out', "$PWD\test-out", '--log', "$PWD\test-out\results.txt") + $files
           $p = Start-Process -FilePath $exe -ArgumentList ($cliArgs | ForEach-Object { '"' + $_ + '"' }) -Wait -PassThru
@@ -96,12 +96,12 @@ jobs:
           if ($made -lt 4) { Write-Error "only $made of 4 files were compressed" }
 
       - name: Zip
-        run: Compress-Archive -Path "dist/General File Compressor" -DestinationPath "General-File-Compressor-Windows.zip" -CompressionLevel Optimal
+        run: Compress-Archive -Path "dist/FileCompressor" -DestinationPath "FileCompressor-Windows.zip" -CompressionLevel Optimal
 
       - uses: actions/upload-artifact@v4
         with:
-          name: General-File-Compressor-Windows
-          path: General-File-Compressor-Windows.zip
+          name: FileCompressor-Windows
+          path: FileCompressor-Windows.zip
           retention-days: 30
 
       # For checking builds from the chat: the ~100 MB zip goes to the
@@ -115,9 +115,9 @@ jobs:
         run: |
           git checkout -q --orphan ci-out-windows
           git rm -rq --cached . && git clean -fdxq
-          split -b 45m ../General-File-Compressor-Windows.zip "General File Compressor.zip.part_"
+          split -b 45m ../FileCompressor-Windows.zip "FileCompressor.zip.part_"
           cp ../test-out/results.txt test-results.txt 2>/dev/null || true
-          sha256sum ../General-File-Compressor-Windows.zip | cut -d' ' -f1 > sha256.txt
+          sha256sum ../FileCompressor-Windows.zip | cut -d' ' -f1 > sha256.txt
           echo "${{ github.sha }}" > sha.txt
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "Windows build of ${{ github.sha }}"
@@ -135,10 +135,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: General-File-Compressor-Windows
+          name: FileCompressor-Windows
           path: dl
       - name: Add the Windows zip to the release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: bash .github/scripts/release_upload.sh dl/General-File-Compressor-Windows.zip
+        run: bash .github/scripts/release_upload.sh dl/FileCompressor-Windows.zip

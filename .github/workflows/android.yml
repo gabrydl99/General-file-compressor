@@ -128,7 +128,7 @@ jobs:
           fi
           mkdir -p logs apk
           gradle -p android --no-daemon --console=plain assembleDebug assembleRelease 2>&1 | tee logs/app-build.log
-          cp android/app/build/outputs/apk/release/*.apk apk/General-File-Compressor-Android.apk
+          cp android/app/build/outputs/apk/release/*.apk apk/FileCompressor-Android.apk
           cp android/app/build/outputs/apk/debug/*.apk apk/gfc-debug.apk
           ls -l apk
       - uses: actions/upload-artifact@v4
@@ -229,4 +229,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: bash .github/scripts/release_upload.sh apk/General-File-Compressor-Android.apk
+        run: bash .github/scripts/release_upload.sh apk/FileCompressor-Android.apk
